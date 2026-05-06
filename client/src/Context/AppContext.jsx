@@ -35,22 +35,23 @@ const axiosInstance = axios.create({
   timeout: 30000, // Increased to 30 seconds for Render cold starts
 });
 
-// Add retry interceptor
+// Add request interceptor for debugging
+axiosInstance.interceptors.request.use(
+  (config) => {
+    console.log("API Request:", config.method?.toUpperCase(), config.url);
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Add response interceptor for debugging
 axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    
-    // Retry on timeout or network error
-    if ((error.code === 'ECONNABORTED' || error.message.includes('Network Error')) && !originalRequest._retry) {
-      originalRequest._retry = true;
-      console.log("Retrying request due to timeout...");
-      
-      // Wait 2 seconds and retry
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      return axiosInstance(originalRequest);
-    }
-    
+  (response) => {
+    console.log("API Response:", response.status, response.config.url);
+    return response;
+  },
+  (error) => {
+    console.error("API Error:", error.response?.status, error.response?.data || error.message);
     return Promise.reject(error);
   }
 );

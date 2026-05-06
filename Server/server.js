@@ -42,7 +42,10 @@ app.use(cookieParser());
 // CORS CONFIGURATION - DEPLOYMENT READY
 // ======================
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? true : [
+  origin: process.env.NODE_ENV === 'production' ? [
+    "https://quick-mart-1-qy6l.onrender.com",  // New frontend URL
+    "https://quickmart-frontend-sntg.onrender.com"  // Old frontend URL
+  ] : [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "https://quickmart-frontend-sntg.onrender.com"
