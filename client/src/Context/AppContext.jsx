@@ -8,8 +8,9 @@ import axios from "axios";
 // ======================
 const getBackendUrl = () => {
   // Check for environment variable first
-  if (import.meta.env.VITE_BACKEND_URL) {
-    return import.meta.env.VITE_BACKEND_URL;
+  const envBackendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL;
+  if (envBackendUrl) {
+    return envBackendUrl;
   }
   
   // For production, use the same origin as frontend

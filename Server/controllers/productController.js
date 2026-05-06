@@ -50,7 +50,9 @@ export const addProduct = async (req, res) => {
     // Normalize data types
     productData.price = Number(productData.price);
     productData.offerprice = Number(productData.offerPrice ?? productData.offerprice);
-    productData.inStock = productData.inStock === true || productData.inStock === 'true' || productData.inStock === '1';
+    productData.inStock = productData.inStock !== undefined
+      ? productData.inStock === true || productData.inStock === 'true' || productData.inStock === '1'
+      : true;
 
     if (typeof productData.description === 'string') {
       productData.description = [productData.description];
