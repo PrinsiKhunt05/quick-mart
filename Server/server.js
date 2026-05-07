@@ -42,10 +42,13 @@ app.use(cookieParser());
 // CORS CONFIGURATION - DEPLOYMENT READY
 // ======================
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? true : [
+  origin: process.env.NODE_ENV === 'production' ? [
+    process.env.FRONTEND_URL,
+    "https://quick-mart-1-qy6l.onrender.com"
+  ] : [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://quickmart-frontend-sntg.onrender.com"
+    "https://quick-mart-1-qy6l.onrender.com"
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
@@ -111,9 +114,16 @@ const startServer = async () => {
     await connectCloudinary();
     console.log(" Cloudinary connected successfully");
 
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "http://127.0.0.1:5173",
+      "https://quick-mart-1-qy6l.onrender.com",
+      process.env.FRONTEND_URL
+    ].filter(Boolean);
+
     app.listen(PORT, () => {
       console.log(` Server running on port ${PORT}`);
-      console.log(` CORS enabled for: http://localhost:5173, https://quickmart-frontend-sntg.onrender.com`);
+      console.log(` CORS enabled for: ${allowedOrigins.join(", ")}`);
       console.log(` Local API URL: http://localhost:${PORT}`);
     });
   } catch (error) {

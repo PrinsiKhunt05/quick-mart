@@ -23,20 +23,22 @@ import About from './Pages/About'
 import ContactUs from './Pages/ContactUs'
 import UserList from './Pages/Seller/UserList'
 
+import { Box, Container } from '@mui/material'
+
 const App = () => {
   const isSellerPath = useLocation().pathname.includes("seller")
   const { showUserLogin, isSeller } = useAppContext()
 
   return (
-    <div className='text-default min-h-screen text-gray-700 bg-white'>
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'white' }}>
       {!isSellerPath && <Navbar />}
       {showUserLogin && <Login />}
       <Toaster
-        position="top-right" // required by library, but we override with containerStyle below
+        position="top-right"
         containerStyle={{
           top: '50%',
           right: '20px',
-          transform: 'translateY(-50%)', // centers vertically
+          transform: 'translateY(-50%)',
         }}
         toastOptions={{
           style: {
@@ -58,7 +60,13 @@ const App = () => {
         }}
       />
 
-      <div className={`${isSellerPath ? "" : " px-6 md:px-16 lg:px-24 xl:px-32"} `}>
+      <Box 
+        component="div" 
+        sx={{ 
+          flex: 1,
+          px: isSellerPath ? 0 : { xs: 2, sm: 4, md: 8, lg: 12, xl: 16 }
+        }}
+      >
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/products' element={<AllProduct />} />
@@ -82,10 +90,10 @@ const App = () => {
             <Route path="orders" element={<Orders />} />
           </Route>
         </Routes>
-      </div>
+      </Box>
 
       {!isSellerPath && <Fotter />}
-    </div>
+    </Box>
   )
 }
 

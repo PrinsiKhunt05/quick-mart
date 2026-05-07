@@ -1,11 +1,90 @@
 import React, { useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { useAppContext } from "../Context/AppContext";
 import toast from "react-hot-toast";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  IconButton,
+  Badge,
+  Box,
+  InputBase,
+  Menu,
+  MenuItem,
+  Avatar,
+  Drawer,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  styled,
+  alpha
+} from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.black, 0.05),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.black, 0.1),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: theme.palette.text.secondary,
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '25ch',
+    },
+  },
+}));
+
+const NavButton = styled(Button)(({ theme }) => ({
+  textTransform: 'none',
+  fontWeight: 500,
+  color: theme.palette.text.primary,
+  '&.active': {
+    color: theme.palette.primary.main,
+  },
+  '&:hover': {
+    backgroundColor: 'transparent',
+    color: theme.palette.primary.main,
+  },
+}));
 
 const Navbar = () => {
-  const [open, setOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  
   const {
     user,
     setUser,
@@ -17,18 +96,27 @@ const Navbar = () => {
     axios
   } = useAppContext();
 
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const logout = async () => {
     try {
       const { data } = await axios.get('/api/user/logout')
       if(data.success){
         toast.success(data.message)
         setUser(null);
+        handleClose();
         navigate("/");
       }else{
         toast.error(data.message)
       }
     } catch (error) {
-         toast.error(error.message)
+      toast.error(error.message)
     }
   };
 
@@ -38,212 +126,179 @@ const Navbar = () => {
     }
   }, [searchQuery]);
 
-  return (
-    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <NavLink to="/" onClick={() => setOpen(false)} className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">Q</span>
-            </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Quickmart
-            </span>
-          </NavLink>
+  const navItems = [
+    { label: 'Home', path: '/' },
+    { label: 'Products', path: '/products' },
+    { label: 'About', path: '/about' },
+    { label: 'Contact', path: '/contact' },
+    { label: 'Seller', path: '/seller' },
+  ];
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <NavLink 
-              to="/" 
-              className={({isActive}) => `font-medium transition-colors duration-200 ${isActive ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
-            >
-              Home
-            </NavLink>
-            <NavLink 
-              to="/products" 
-              className={({isActive}) => `font-medium transition-colors duration-200 ${isActive ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
-            >
-              Products
-            </NavLink>
-            <NavLink 
-              to="/about" 
-              className={({isActive}) => `font-medium transition-colors duration-200 ${isActive ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
-            >
-              About
-            </NavLink>
-            <NavLink 
-              to="/contact" 
-              className={({isActive}) => `font-medium transition-colors duration-200 ${isActive ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
-            >
-              Contact
-            </NavLink>
-            <NavLink 
-              to="/seller" 
-              className={({isActive}) => `font-medium transition-colors duration-200 ${isActive ? 'text-blue-600' : 'text-gray-700 hover:text-blue-600'}`}
-            >
-              Seller
-            </NavLink>
-
-            {/* Search Bar */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <img src={assets.search_icon} alt="search" className="w-4 h-4 text-gray-400" />
-              </div>
-              <input
-                onChange={(e) => SetSearchQuery(e.target.value)}
-                className="block w-72 pl-10 pr-3 py-2 border border-gray-200 rounded-lg text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                type="text"
-                placeholder="Search products..."
-              />
-            </div>
-
-            {/* Cart */}
-            <div
-              onClick={() => navigate("/cart")}
-              className="relative cursor-pointer p-2 hover:bg-gray-50 rounded-lg transition-colors duration-200"
-            >
-              <img
-                src={assets.nav_cart_icon}
-                alt="cart"
-                className="w-6 h-6 text-gray-600"
-              />
-              {getCartCount() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
-                  {getCartCount()}
-                </span>
-              )}
-            </div>
-
-            {/* User Menu */}
-            {!user ? (
-              <button
-                onClick={() => SetShowUserLogin(true)}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium transition-all duration-200 hover:shadow-medium hover-lift"
-              >
-                Sign In
-              </button>
-            ) : (
-              <div className="relative group">
-                <div className="flex items-center space-x-2 cursor-pointer p-2 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                  <img src={assets.profile_icon} className="w-8 h-8 rounded-full" alt="Profile" />
-                  <span className="text-sm font-medium text-gray-700">{user.name}</span>
-                </div>
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-strong border border-gray-100 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  <div
-                    onClick={() => navigate("my-orders")}
-                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors duration-200"
-                  >
-                    My Orders
-                  </div>
-                  <div
-                    onClick={logout}
-                    className="px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 cursor-pointer transition-colors duration-200"
-                  >
-                    Sign Out
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile menu button */}
-          <div className="md:hidden flex items-center space-x-4">
-            <div
-              onClick={() => navigate("/cart")}
-              className="relative cursor-pointer p-2"
-            >
-              <img
-                src={assets.nav_cart_icon}
-                alt="cart"
-                className="w-6 h-6"
-              />
-              {getCartCount() > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                  {getCartCount()}
-                </span>
-              )}
-            </div>
-            <button
-              onClick={() => setOpen(!open)}
-              className="p-2 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-            >
-              <img src={assets.menu_icon} alt="menu" className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation */}
-        {open && (
-          <div className="md:hidden border-t border-gray-100 py-4 space-y-2">
-            <NavLink 
-              to="/" 
-              onClick={() => setOpen(false)}
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
-            >
-              Home
-            </NavLink>
-            <NavLink 
-              to="/products" 
-              onClick={() => setOpen(false)}
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
-            >
-              Products
-            </NavLink>
-            <NavLink 
-              to="/about" 
-              onClick={() => setOpen(false)}
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
-            >
-              About
-            </NavLink>
-            <NavLink 
-              to="/contact" 
-              onClick={() => setOpen(false)}
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
-            >
-              Contact
-            </NavLink>
-            <NavLink 
-              to="/seller" 
-              onClick={() => setOpen(false)}
-              className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
-            >
-              Seller
-            </NavLink>
-            {user && (
-              <NavLink 
-                to="my-orders" 
-                onClick={() => setOpen(false)}
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
-              >
-                My Orders
-              </NavLink>
-            )}
-            <div className="px-4 pt-2">
-              {!user ? (
-                <button
-                  onClick={() => {
-                    setOpen(false);
-                    SetShowUserLogin(true);
-                  }}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-medium transition-all duration-200"
-                >
-                  Sign In
-                </button>
-              ) : (
-                <button
-                  onClick={logout}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:shadow-medium transition-all duration-200"
-                >
-                  Sign Out
-                </button>
-              )}
-            </div>
-          </div>
+  const drawer = (
+    <Box sx={{ width: 250 }} onClick={() => setMobileOpen(false)}>
+      <List>
+        {navItems.map((item) => (
+          <ListItem key={item.label} disablePadding>
+            <ListItemButton component={NavLink} to={item.path}>
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+        {user && (
+          <ListItem disablePadding>
+            <ListItemButton onClick={() => navigate("my-orders")}>
+              <ListItemText primary="My Orders" />
+            </ListItemButton>
+          </ListItem>
         )}
-      </div>
-    </nav>
+      </List>
+      <Box sx={{ p: 2 }}>
+        {!user ? (
+          <Button 
+            fullWidth 
+            variant="contained" 
+            onClick={() => SetShowUserLogin(true)}
+          >
+            Sign In
+          </Button>
+        ) : (
+          <Button 
+            fullWidth 
+            variant="outlined" 
+            onClick={logout}
+          >
+            Sign Out
+          </Button>
+        )}
+      </Box>
+    </Box>
+  );
+
+  return (
+    <AppBar position="sticky" color="inherit" elevation={0} sx={{ borderBottom: '1px solid', borderColor: 'divider', bgcolor: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(8px)' }}>
+      <Toolbar sx={{ justifyContent: 'space-between', maxWidth: 'lg', width: '100%', mx: 'auto' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={() => setMobileOpen(true)}
+            sx={{ mr: 2, display: { md: 'none' } }}
+          >
+            <MenuIcon />
+          </IconButton>
+          
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Box sx={{ 
+              width: 32, 
+              height: 32, 
+              borderRadius: 1, 
+              bgcolor: 'primary.main', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center' 
+            }}>
+              <Typography variant="body2" sx={{ color: 'white', fontWeight: 'bold' }}>Q</Typography>
+            </Box>
+            <Typography 
+              variant="h6" 
+              component="span" 
+              sx={{ 
+                fontWeight: 'bold', 
+                background: 'linear-gradient(135deg, #2563eb 0%, #7c3aed 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                display: { xs: 'none', sm: 'block' }
+              }}
+            >
+              Quickmart
+            </Typography>
+          </Link>
+        </Box>
+
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1 }}>
+          {navItems.map((item) => (
+            <NavButton 
+              key={item.label} 
+              component={NavLink} 
+              to={item.path}
+            >
+              {item.label}
+            </NavButton>
+          ))}
+          
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon fontSize="small" />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search products..."
+              inputProps={{ 'aria-label': 'search' }}
+              onChange={(e) => SetSearchQuery(e.target.value)}
+            />
+          </Search>
+
+          <IconButton onClick={() => navigate("/cart")} color="inherit">
+            <Badge badgeContent={getCartCount()} color="primary">
+              <ShoppingCartIcon />
+            </Badge>
+          </IconButton>
+
+          {!user ? (
+            <Button 
+              variant="contained" 
+              onClick={() => SetShowUserLogin(true)}
+              sx={{ ml: 2, borderRadius: 2, px: 3 }}
+            >
+              Sign In
+            </Button>
+          ) : (
+            <Box sx={{ ml: 2 }}>
+              <IconButton
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <Avatar 
+                  src={assets.profile_icon} 
+                  sx={{ width: 32, height: 32 }}
+                />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+              >
+                <MenuItem onClick={() => { handleClose(); navigate("my-orders"); }}>My Orders</MenuItem>
+                <MenuItem onClick={logout}>Sign Out</MenuItem>
+              </Menu>
+            </Box>
+          )}
+        </Box>
+
+        <Box sx={{ display: { md: 'none' }, alignItems: 'center' }}>
+          <IconButton onClick={() => navigate("/cart")} color="inherit">
+            <Badge badgeContent={getCartCount()} color="primary">
+              <ShoppingCartIcon />
+            </Badge>
+          </IconButton>
+        </Box>
+      </Toolbar>
+
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: 250 },
+        }}
+      >
+        {drawer}
+      </Drawer>
+    </AppBar>
   );
 };
 
