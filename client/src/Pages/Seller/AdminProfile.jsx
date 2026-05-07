@@ -108,26 +108,10 @@ const AdminProfile = () => {
           {[
             {
               key: "1",
-              name: "Admin One",
+              name: sellerProfile.name,
               photo: adminPhotos["1"],
               fallback: fallbackImages["1"],
               role: "Senior Admin",
-              status: "Online"
-            },
-            {
-              key: "2", 
-              name: "Admin Two",
-              photo: adminPhotos["2"],
-              fallback: fallbackImages["2"],
-              role: "Product Manager",
-              status: "Online"
-            },
-            {
-              key: "3",
-              name: "Admin Three", 
-              photo: adminPhotos["3"],
-              fallback: fallbackImages["3"],
-              role: "Order Manager",
               status: "Online"
             }
           ].map((admin) => (
