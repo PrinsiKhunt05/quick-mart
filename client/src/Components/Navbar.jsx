@@ -159,13 +159,13 @@ const Navbar = () => {
                 </Typography>
               )}
             </NavLink>
-            {/* <NavLink to="/seller" style={{ textDecoration: "none" }}>
+            <NavLink to="/seller" style={{ textDecoration: "none" }}>
               {({ isActive }) => (
                 <Typography component="span" sx={linkSx(isActive)}>
                   Seller
                 </Typography>
               )}
-            </NavLink> */}
+            </NavLink>
 
             <TextField
               size="small"
