@@ -12,9 +12,9 @@ const getBackendUrl = () => {
     return import.meta.env.VITE_BACKEND_URL;
   }
   
-  // For production, use the same origin as frontend
+  // For production, use the environment variable
   if (import.meta.env.PROD) {
-    return window.location.origin;
+    return import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL;
   }
   
   // For development, try common backend ports

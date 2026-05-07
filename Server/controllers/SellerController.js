@@ -36,10 +36,12 @@ export const sellerLogin = async (req, res) => {
     const profile = { role: 'admin', email: matched.email, name: matched.name, key: matched.key };
     const token = jwt.sign(profile, process.env.JWT_SECRET, { expiresIn: '7d' });
 
+    const isProduction = process.env.NODE_ENV === 'production';
+    
     res.cookie('sellerToken', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      secure: isProduction || req.secure || req.headers['x-forwarded-proto'] === 'https',
+      sameSite: isProduction ? 'none' : 'lax', // Use none for production cross-origin, lax for local
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
