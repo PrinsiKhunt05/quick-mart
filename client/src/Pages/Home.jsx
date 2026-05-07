@@ -1,36 +1,35 @@
-import React from "react";
-import { Box, Container, Divider } from "@mui/material";
-import MainBanner from "../Components/MainBanner";
-import Categoris from "../Components/Categoris";
-import BestSeller from "../Components/BestSeller";
-import BottomBanner from "../Components/BottomBanner";
-import NewLetter from "../Components/NewLetter";
+import React from 'react'
+import MainBanner from '../Components/MainBanner'
+import Categoris from '../Components/Categoris'
+import BestSeller from '../Components/BestSeller'
+import BottomBanner from '../Components/BottomBanner'
+import NewLetter from '../Components/NewLetter'
 
 const Home = () => {
   return (
-    <Box component="main" sx={{ mt: 5 }} aria-label="Homepage">
-      <Box component="section" aria-label="Main banner">
+    <main className="mt-10" aria-label="Homepage">
+      <section aria-label="Main banner">
         <MainBanner />
-      </Box>
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
-        <Box component="section" aria-label="Product categories" sx={{ mt: 8 }}>
+      </section>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section aria-label="Product categories" className="mt-16">
           <Categoris />
-        </Box>
-        <Divider sx={{ mt: 6, borderColor: "rgba(0,0,0,0.08)" }} />
-        <Box component="section" aria-label="Best sellers" sx={{ mt: 6 }}>
+        </section>
+        <hr className="mt-12 border-gray-200/60" />
+        <section aria-label="Best sellers" className="mt-12">
           <BestSeller />
-        </Box>
-      </Container>
-      <Box component="section" aria-label="Why we are the best" sx={{ mt: 10 }}>
+        </section>
+      </div>
+      <section aria-label="Why we are the best" className="mt-20">
         <BottomBanner />
-      </Box>
-      <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3 } }}>
-        <Box component="section" aria-label="Newsletter" sx={{ mt: 10 }}>
+      </section>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section aria-label="Newsletter" className="mt-20">
           <NewLetter />
-        </Box>
-      </Container>
-    </Box>
-  );
-};
+        </section>
+      </div>
+    </main>
+  )
+}
 
-export default Home;
+export default Home

@@ -41,30 +41,16 @@ app.use(cookieParser());
 // ======================
 // CORS CONFIGURATION - DEPLOYMENT READY
 // ======================
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  process.env.CLIENT_URL_PROD,
-  "http://localhost:5173",
-  "https://quick-mart-1-qy6l.onrender.com",
-  "https://quick-mart-7k5r.onrender.com",
-  "https://quickmart-frontend-sntg.onrender.com"
-].filter(Boolean);
-
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS policy blocked access from origin: ${origin}`));
-    }
-  },
+  origin: process.env.NODE_ENV === 'production' ? true : [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://quickmart-frontend-sntg.onrender.com"
+  ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
 }));
-
-// ⚠️ TEMPORARY FOR TESTING (remove in production):
-// app.use(cors({ origin: "*" }));
 
 // ======================
 // ROUTES
@@ -127,7 +113,7 @@ const startServer = async () => {
 
     app.listen(PORT, () => {
       console.log(` Server running on port ${PORT}`);
-      console.log(` CORS enabled for: ${allowedOrigins.join(", ")}`);
+      console.log(` CORS enabled for: http://localhost:5173, https://quickmart-frontend-sntg.onrender.com`);
       console.log(` Local API URL: http://localhost:${PORT}`);
     });
   } catch (error) {

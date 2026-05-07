@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Button, IconButton, Divider, MenuItem, Select, FormControl, Stack, Paper } from "@mui/material";
 import { assets } from "../assets/assets";
 import { useAppContext } from "../Context/AppContext";
 import toast from "react-hot-toast";
@@ -26,11 +25,14 @@ const Cart = () => {
   const [paymentOption, setPaymentOption] = useState("COD");
 
   const getCart = () => {
-    const tempArray = [];
+    let tempArray = [];
     for (const key in cartItems) {
       const product = products.find((item) => item._id === key);
+      // guard: product may be undefined if products not loaded yet
       if (!product) continue;
-      tempArray.push({ ...product, quantity: cartItems[key] });
+      // do not mutate original product object from products state
+      const productCopy = { ...product, quantity: cartItems[key] };
+      tempArray.push(productCopy);
     }
     setCartArray(tempArray);
   };
@@ -40,7 +42,9 @@ const Cart = () => {
       const { data } = await axios.get("/api/address/get");
       if (data.success) {
         setAddress(data.address);
-        if (data.address.length > 0) setSelectAdress(data.address[0]);
+        if (data.address.length > 0) {
+          setSelectAdress(data.address[0]);
+        }
       } else {
         toast.error(data.message);
       }
@@ -55,6 +59,7 @@ const Cart = () => {
         return toast.error("please select addres");
       }
 
+      //    with cod
       if (paymentOption === "COD") {
         const { data } = await axios.post("/api/order/cod", {
           userId: user._id,
@@ -72,7 +77,9 @@ const Cart = () => {
         } else {
           toast.error(data.message);
         }
-      } else {
+      }else{
+        //  plce order with stripe
+
         const { data } = await axios.post("/api/order/stripe", {
           userId: user._id,
           items: cartArray.map((item) => ({
@@ -83,8 +90,8 @@ const Cart = () => {
         });
 
         if (data.success) {
-          SetCartItems({});
-          window.location.replace(data.url);
+                    SetCartItems({});
+          window.location.replace(data.url)
         } else {
           toast.error(data.message);
         }
@@ -106,194 +113,206 @@ const Cart = () => {
     }
   }, [user]);
 
-  if (!(products.length > 0 && cartItems)) return null;
-
-  return (
-    <Stack direction={{ xs: "column", md: "row" }} spacing={4} sx={{ mt: 8 }} alignItems="flex-start">
-      <Box sx={{ flex: 1, maxWidth: "56rem", width: "100%" }}>
-        <Typography variant="h4" fontWeight={500} gutterBottom>
+  return products.length > 0 && cartItems ? (
+    <div className="flex flex-col md:flex-row mt-16">
+      <div className="flex-1 max-w-4xl">
+        <h1 className="text-3xl font-medium mb-6">
           Shopping Cart{" "}
-          <Typography component="span" variant="body2" color="primary">
-            {getCartCount()} Items
-          </Typography>
-        </Typography>
+          <span className="text-sm text-primary">{getCartCount()} Items</span>
+        </h1>
 
-        <Box sx={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", color: "text.secondary", fontWeight: 600, pb: 2, mt: 2 }}>
-          <Typography variant="body2">Product Details</Typography>
-          <Typography variant="body2" textAlign="center">
-            Subtotal
-          </Typography>
-          <Typography variant="body2" textAlign="center">
-            Action
-          </Typography>
-        </Box>
-        <Divider />
+        <div className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 text-base font-medium pb-3">
+          <p className="text-left">Product Details</p>
+          <p className="text-center">Subtotal</p>
+          <p className="text-center">Action</p>
+        </div>
 
         {cartArray.map((product) => (
-          <Box key={product._id} sx={{ py: 2 }}>
-            <Box sx={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", alignItems: "center", gap: 1 }}>
-              <Stack direction="row" spacing={{ xs: 1.5, md: 3 }} alignItems="center">
-                <Box
-                  onClick={() => {
-                    navigate(`/products/${product.category.toLowerCase()}/${product._id}`);
-                    scrollTo(0, 0);
-                  }}
-                  sx={{
-                    cursor: "pointer",
-                    width: 96,
-                    height: 96,
-                    border: 1,
-                    borderColor: "grey.300",
-                    borderRadius: 1,
-                    overflow: "hidden",
-                    flexShrink: 0,
-                  }}
-                >
-                  <Box component="img" src={product.image[0]} alt={product.name} sx={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                </Box>
-                <Box>
-                  <Typography fontWeight={600} sx={{ display: { xs: "none", md: "block" } }}>
-                    {product.name}
-                  </Typography>
-                  <Box sx={{ mt: 2 }}>
-                    <Stack direction="row" alignItems="center" spacing={2}>
-                      <Typography variant="caption" color="text.secondary" sx={{ textTransform: "uppercase" }}>
-                        Qty:
-                      </Typography>
-                      <Stack direction="row" alignItems="center" sx={{ width: 80, height: 32, bgcolor: "grey.100", borderRadius: 2, border: 1, borderColor: "grey.200" }}>
-                        <Button
-                          size="small"
-                          onClick={() => {
-                            const newQty = cartItems[product._id] - 1;
-                            if (newQty > 0) {
-                              updateCartItem(product._id, newQty);
-                            } else {
-                              removeFromCart(product._id);
-                            }
-                          }}
-                          sx={{ minWidth: 32, px: 0, color: "primary.main", fontWeight: 700 }}
-                        >
-                          −
-                        </Button>
-                        <Typography sx={{ flex: 1, textAlign: "center", fontWeight: 700 }}>{cartItems[product._id]}</Typography>
-                        <Button size="small" onClick={() => updateCartItem(product._id, cartItems[product._id] + 1)} sx={{ minWidth: 32, px: 0, color: "primary.main", fontWeight: 700 }}>
-                          +
-                        </Button>
-                      </Stack>
-                    </Stack>
-                  </Box>
-                </Box>
-              </Stack>
-              <Typography textAlign="center" color="text.secondary">
-                {currency}
-                {product.offerprice * product.quantity}
-              </Typography>
-              <IconButton onClick={() => removeFromCart(product._id)} sx={{ mx: "auto" }}>
-                <Box component="img" src={assets.remove_icon} alt="remove" sx={{ width: 24, height: 24 }} />
-              </IconButton>
-            </Box>
-          </Box>
+          <div
+            key={product._id}
+            className="grid grid-cols-[2fr_1fr_1fr] text-gray-500 items-center text-sm md:text-base font-medium pt-3"
+          >
+            <div className="flex items-center md:gap-6 gap-3">
+              <div
+                onClick={() => {
+                  navigate(
+                    `/products/${product.category.toLowerCase()}/${product._id}`
+                  );
+                  scrollTo(0, 0);
+                }}
+                className="cursor-pointer w-24 h-24 flex items-center justify-center border border-gray-300 rounded"
+              >
+                <img
+                  className="max-w-full h-full object-cover"
+                  src={product.image[0]}
+                  alt={product.name}
+                />
+              </div>
+              <div>
+                <p className="hidden md:block font-semibold">{product.name}</p>
+                <div className="font-normal text-gray-500/70 mt-2">
+                  <div className="flex items-center gap-3 mt-2">
+                    <p className="text-xs text-gray-500 uppercase">Qty:</p>
+                    <div className="flex items-center justify-center gap-2 w-20 h-8 bg-gray-100 rounded-lg border border-gray-200">
+                      <button
+                        onClick={() => {
+                          const newQty = cartItems[product._id] - 1;
+                          if (newQty > 0) {
+                            updateCartItem(product._id, newQty);
+                          } else {
+                            removeFromeCart(product._id);
+                          }
+                        }}
+                        className="cursor-pointer font-bold text-primary hover:text-primary-dull transition px-2 h-full flex items-center"
+                      >
+                        −
+                      </button>
+                      <span className="w-6 text-center font-semibold text-gray-700">
+                        {cartItems[product._id]}
+                      </span>
+                      <button
+                        onClick={() => updateCartItem(product._id, cartItems[product._id] + 1)}
+                        className="cursor-pointer font-bold text-primary hover:text-primary-dull transition px-2 h-full flex items-center"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="text-center">
+              {currency}
+              {product.offerprice * product.quantity}
+            </p>
+            <button
+              onClick={() => removeFromCart(product._id)}
+              className="cursor-pointer mx-auto"
+            >
+              <img
+                src={assets.remove_icon}
+                alt="remove"
+                className=" inline-block w-6 h-6"
+              />
+            </button>
+          </div>
         ))}
 
-        <Button
+        <button
           onClick={() => {
             navigate("/products");
             scrollTo(0, 0);
           }}
-          sx={{ mt: 2, textTransform: "none", fontWeight: 600, color: "primary.main" }}
-          startIcon={<Box component="img" src={assets.arrow_right_icon_colored} alt="" />}
+          className="group cursor-pointer flex items-center mt-8 gap-2 text-primary font-medium"
         >
+          <img
+            className="group-hover:translate-x-1 transition"
+            src={assets.arrow_right_icon_colored}
+            alt="arrow"
+          />
           Continue Shopping
-        </Button>
-      </Box>
+        </button>
+      </div>
 
-      <Paper variant="outlined" sx={{ width: "100%", maxWidth: 360, p: 2.5, bgcolor: "rgba(249,250,251,0.85)", mt: { xs: 4, md: 0 }, alignSelf: "stretch" }}>
-        <Typography variant="h6" fontWeight={500}>
-          Order Summary
-        </Typography>
-        <Divider sx={{ my: 3 }} />
+      <div className="max-w-[360px] w-full bg-gray-100/40 p-5 max-md:mt-16 border border-gray-300/70">
+        <h2 className="text-xl md:text-xl font-medium">Order Summary</h2>
+        <hr className="border-gray-300 my-5" />
 
-        <Box sx={{ position: "relative" }}>
-          <Typography variant="caption" fontWeight={600} sx={{ letterSpacing: 0.5 }}>
-            DELIVERY ADDRESS
-          </Typography>
-          <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mt: 1 }}>
-            <Typography variant="body2" color="text.secondary" sx={{ pr: 1 }}>
+        <div className="mb-6">
+          <p className="text-sm font-medium uppercase">Delivery Address</p>
+          <div className="relative flex justify-between items-start mt-2">
+            <p className="text-gray-500">
               {selectAddress
-                ? [selectAddress.street, selectAddress.city, selectAddress.state, selectAddress.country || selectAddress.contry]
-                    .filter(Boolean)
-                    .join(", ")
+                ? `${selectAddress.street || ""}, ${
+                    selectAddress.city || ""
+                  }, ${selectAddress.state || ""}, ${
+                    selectAddress.country || ""
+                  }`
                 : "No address found"}
-            </Typography>
-            <Typography component="button" variant="body2" color="primary" onClick={() => setShowAddress(!showAddress)} sx={{ border: "none", background: "none", cursor: "pointer", textDecoration: showAddress ? "none" : "underline", flexShrink: 0 }}>
-              Add-Address
-            </Typography>
-          </Stack>
-          {showAddress && (
-            <Paper variant="outlined" sx={{ position: "absolute", left: 0, right: 0, top: "100%", mt: 0.5, zIndex: 10, bgcolor: "background.paper" }}>
-              {addresses.map((address, index) => (
-                <Typography
-                  key={address.id || index}
-                  variant="body2"
-                  sx={{ px: 1, py: 1, cursor: "pointer", "&:hover": { bgcolor: "grey.100" } }}
-                  onClick={() => {
-                    setSelectAdress(address);
-                    setShowAddress(false);
-                  }}
+            </p>
+            <button
+              onClick={() => setShowAddress(!showAddress)}
+              className="text-primary hover:underline cursor-pointer"
+            >
+             Add-Address
+            </button>
+            {showAddress && (
+              <div className="absolute top-12 py-1 bg-white border border-gray-300 text-sm w-full">
+                {addresses.map((address, index) => (
+                  <p
+                    key={address.id || index}
+                    onClick={() => {
+                      setSelectAdress(address);
+                      setShowAddress(false);
+                    }}
+                    className="text-gray-500 p-2 hover:bg-gray-100"
+                  >
+                    {address.street},{address.city},{address.state},
+                    {address.country}
+                  </p>
+                ))}
+
+                <p
+                  onClick={() => navigate("/add-address")}
+                  className="text-peimary text-center cursor-pointer p-2 hover:bg-indigo-500/10"
                 >
-                  {[address.street, address.city, address.state, address.country || address.contry]
-                    .filter(Boolean)
-                    .join(", ")}
-                </Typography>
-              ))}
-              <Typography variant="body2" textAlign="center" color="primary" sx={{ cursor: "pointer", py: 1, "&:hover": { bgcolor: "rgba(99,102,241,0.08)" } }} onClick={() => navigate("/add-address")}>
-                Add address
-              </Typography>
-            </Paper>
-          )}
-        </Box>
+                  Add address
+                </p>
+              </div>
+            )}
+          </div>
 
-        <Typography variant="caption" fontWeight={600} sx={{ letterSpacing: 0.5, display: "block", mt: 4 }}>
-          PAYMENT METHOD
-        </Typography>
-        <FormControl fullWidth sx={{ mt: 1 }}>
-          <Select size="small" value={paymentOption} onChange={(e) => setPaymentOption(e.target.value)}>
-            <MenuItem value="COD">Cash On Delivery</MenuItem>
-            <MenuItem value="Online">Online Payment</MenuItem>
-          </Select>
-        </FormControl>
+          <p className="text-sm font-medium uppercase mt-6">Payment Method</p>
 
-        <Divider sx={{ my: 3 }} />
+          <select
+            onChange={(e) => setPaymentOption(e.target.value)}
+            className="w-full border border-gray-300 bg-white px-3 py-2 mt-2 outline-none"
+          >
+            <option value="COD">Cash On Delivery</option>
+            <option value="Online">Online Payment</option>
+          </select>
+        </div>
 
-        <Stack spacing={1}>
-          <Stack direction="row" justifyContent="space-between" color="text.secondary">
-            <Typography variant="body2">Price</Typography>
-            <Typography variant="body2">
+        <hr className="border-gray-300" />
+
+        <div className="text-gray-500 mt-4 space-y-2">
+          <p className="flex justify-between">
+            <span>Price</span>
+            <span>
               {currency}
               {getCartAmount()}
-            </Typography>
-          </Stack>
-          <Stack direction="row" justifyContent="space-between" color="text.secondary">
-            <Typography variant="body2">Shipping Fee</Typography>
-            <Typography variant="body2" color="success.main">
-              Free
-            </Typography>
-          </Stack>
-          <Stack direction="row" justifyContent="space-between" sx={{ pt: 1 }}>
-            <Typography fontWeight={600}>Total Amount:</Typography>
-            <Typography fontWeight={600}>
-              {currency}
-              {getCartAmount()}
-            </Typography>
-          </Stack>
-        </Stack>
+            </span>
+          </p>
+          <p className="flex justify-between">
+            <span>Shipping Fee</span>
+            <span className="text-green-600">Free</span>
+          </p>
+         {/* <p className="flex justify-between">
+  <span>Tax (2%)</span>
+  <span>
+    {currency}
+    {getCartAmount() + (getCartAmount() * 2) / 100}
+  </span>
+</p> */}
+<p className="flex justify-between text-lg font-medium mt-3">
+  <span>Total Amount:</span>
+  <span>
+    {currency}
+    {getCartAmount()}
+  </span>
+</p>
 
-        <Button fullWidth variant="contained" color="primary" onClick={PlaceOrder} sx={{ mt: 3, py: 1.5, textTransform: "none", fontWeight: 600 }}>
+        </div>
+
+        <button
+          onClick={PlaceOrder}
+          className="w-full py-3 mt-6 cursor-pointer bg-primary text-white font-medium hover:bg-primary-dull transition"
+        >
           {paymentOption === "COD" ? "Place Order" : "Proceed to Checkout"}
-        </Button>
-      </Paper>
-    </Stack>
-  );
+        </button>
+      </div>
+    </div>
+  ) : null;
 };
 
 export default Cart;

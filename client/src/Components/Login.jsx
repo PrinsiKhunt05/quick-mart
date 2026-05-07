@@ -1,5 +1,4 @@
 import React from "react";
-import { Modal, Box, Typography, TextField, Button, Stack } from "@mui/material";
 import { useAppContext } from "../Context/AppContext";
 import toast from "react-hot-toast";
 
@@ -14,6 +13,7 @@ const Login = () => {
   const onSubmitHandler = async (event) => {
     try {
       event.preventDefault();
+      // Client-side validation: email must contain '@' and end with '.com'
       const emailLower = String(email || "").trim().toLowerCase();
       if (!emailLower.includes("@") || !emailLower.endsWith(".com")) {
         toast.error("Please enter a valid email that contains '@' and ends with '.com'");
@@ -40,83 +40,80 @@ const Login = () => {
   };
 
   return (
-    <Modal open onClose={() => SetShowUserLogin(false)} sx={{ zIndex: (t) => t.zIndex.drawer + 2 }}>
-      <Box
-        component="form"
+    <div
+      onClick={() => SetShowUserLogin(false)}
+      className="fixed top-0 bottom-0 left-0 right-0 z-30 flex items-center text-sm text-gray-600 bg-black/50"
+    >
+      <form
         onSubmit={onSubmitHandler}
-        sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: { xs: "90%", sm: 352 },
-          bgcolor: "background.paper",
-          border: 1,
-          borderColor: "grey.200",
-          borderRadius: 2,
-          boxShadow: 6,
-          p: 4,
-        }}
+        onClick={(e) => e.stopPropagation()}
+        className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] rounded-lg shadow-xl border border-gray-200 bg-white"
       >
-        <Stack spacing={2}>
-          <Typography variant="h6" textAlign="center" fontWeight={500}>
-            <Typography component="span" color="primary">
-              User
-            </Typography>{" "}
-            {state === "login" ? "Login" : "Sign Up"}
-          </Typography>
-          {state === "register" && (
-            <TextField
-              label="Name"
-              value={name}
+        <p className="text-2xl font-medium m-auto">
+          <span className="text-primary">User</span>{" "}
+          {state === "login" ? "Login" : "Sign Up"}
+        </p>
+        {state === "register" && (
+          <div className="w-full">
+            <p>Name</p>
+            <input
               onChange={(e) => setName(e.target.value)}
+              value={name}
               placeholder="type here"
+              className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+              type="text"
               required
-              fullWidth
-              size="small"
             />
-          )}
-          <TextField
-            label="Email"
-            type="email"
-            value={email}
+          </div>
+        )}
+        <div className="w-full ">
+          <p>Email</p>
+          <input
             onChange={(e) => setEmail(e.target.value)}
+            value={email}
             placeholder="type here"
+            className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+            type="email"
             required
-            fullWidth
-            size="small"
           />
-          <TextField
-            label="Password"
-            type="password"
-            value={password}
+        </div>
+        <div className="w-full ">
+          <p>Password</p>
+          <input
             onChange={(e) => setPassword(e.target.value)}
+            value={password}
             placeholder="type here"
+            className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+            type="password"
             required
-            fullWidth
-            size="small"
           />
-          {state === "register" ? (
-            <Typography variant="body2" color="text.secondary">
-              Already have account?{" "}
-              <Typography component="span" color="primary" onClick={() => setState("login")} sx={{ cursor: "pointer" }}>
-                click here
-              </Typography>
-            </Typography>
-          ) : (
-            <Typography variant="body2" color="text.secondary">
-              Create an account?{" "}
-              <Typography component="span" color="primary" onClick={() => setState("register")} sx={{ cursor: "pointer" }}>
-                click here
-              </Typography>
-            </Typography>
-          )}
-          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ py: 1.25, textTransform: "none" }}>
-            {state === "register" ? "Create Account" : "Login"}
-          </Button>
-        </Stack>
-      </Box>
-    </Modal>
+        </div>
+        {state === "register" ? (
+          <p>
+            Already have account?{" "}
+            <span
+              onClick={() => setState("login")}
+              className="text-primary cursor-pointer"
+            >
+              click here
+            </span>
+          </p>
+        ) : (
+          <p>
+            Create an account?{" "}
+            <span
+              onClick={() => setState("register")}
+              className="text-primary cursor-pointer"
+            >
+              click here
+            </span>
+          </p>
+        )}
+        <button className="bg-primary hover:bg-primary-dull transition-all text-white w-full py-2 rounded-md cursor-pointer">
+          {state === "register" ? "Create Account" : "Login"}
+        </button>
+      </form>
+    </div>
   );
 };
 

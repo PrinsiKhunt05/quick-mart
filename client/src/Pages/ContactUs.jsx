@@ -1,33 +1,16 @@
 import React, { useState } from "react";
-import { Box, Typography, TextField, Button, Paper, Stack } from "@mui/material";
-import { MdPhone, MdEmail, MdLocationOn } from "react-icons/md";
+import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import { useAppContext } from "../Context/AppContext";
 import toast from "react-hot-toast";
 
-const ContactCard = ({ icon, title, children }) => (
-  <Paper
-    elevation={2}
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      gap: 2,
-      p: 2.5,
-      borderRadius: 2,
-      transition: "transform 0.25s, box-shadow 0.25s",
-      "&:hover": { transform: "translateY(-6px)", boxShadow: 6 },
-    }}
-  >
-    {icon}
-    <Box>
-      <Typography sx={{ fontWeight: 700, color: "#2c3e50" }}>{title}</Typography>
-      <Typography sx={{ color: "#636e72" }}>{children}</Typography>
-    </Box>
-  </Paper>
-);
-
 const ContactUs = () => {
   const { axios } = useAppContext();
-  const [formData, setFormData] = useState({ name: "", email: "", contact: "", message: "" });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    contact: "",
+    message: "",
+  });
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -62,73 +45,179 @@ const ContactUs = () => {
   };
 
   return (
-    <Box component="main" aria-label="Contact QuickMart" sx={{ bgcolor: "#f9fbfc" }}>
-      <Box
-        sx={{
-          backgroundImage:
-            "url('https://img.freepik.com/free-photo/contact-us-customer-support-hotline-people-connect-call-customer-support_36325-164.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+    <main style={{ fontFamily: "Arial, sans-serif", background: "#f9fbfc" }} aria-label="Contact QuickMart">
+      {/* Hero Section */}
+      <section
+        style={{
+          background: "url('https://img.freepik.com/free-photo/contact-us-customer-support-hotline-people-connect-call-customer-support_36325-164.jpg') center/cover no-repeat",
           color: "#fff",
           textAlign: "center",
-          py: { xs: 8, md: 12 },
-          px: 2,
+          padding: "100px 20px",
         }}
         aria-label="Contact Hero"
       >
-        <Typography variant="h3" gutterBottom sx={{ fontWeight: 800 }}>
-          Contact QuickMart
-        </Typography>
-        <Typography sx={{ fontSize: "1.125rem", maxWidth: 700, mx: "auto" }}>Have a question, feedback, or need help? We&apos;re here to assist you.</Typography>
-      </Box>
+        <h1 style={{ fontSize: "48px", marginBottom: "10px" }}>Contact QuickMart</h1>
+        <p style={{ fontSize: "18px", maxWidth: "700px", margin: "0 auto" }}>
+          Have a question, feedback, or need help? We're here to assist you.
+        </p>
+      </section>
 
-      <Box sx={{ maxWidth: 1100, mx: "auto", my: { xs: 6, md: 8 }, px: 2 }} aria-label="Contact Form and Info">
-        <Stack direction={{ xs: "column", md: "row" }} spacing={5} justifyContent="space-between">
-          <Paper elevation={4} sx={{ flex: "1 1 500px", p: { xs: 3, md: 5 }, borderRadius: 3 }} component="form" onSubmit={handleSubmit} aria-label="Send us a message">
-            <Typography variant="h5" sx={{ color: "#2E7D32", mb: 3, fontWeight: 700 }}>
-              📩 Send us a Message
-            </Typography>
+      {/* Main Content */}
+      <section style={{ maxWidth: "1100px", margin: "60px auto", padding: "0 20px" }} aria-label="Contact Form and Info">
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "40px", justifyContent: "space-between" }}>
+          {/* Contact Form */}
+          <form
+            onSubmit={handleSubmit}
+            style={{
+              flex: "1 1 500px",
+              backgroundColor: "#fff",
+              padding: "40px",
+              borderRadius: "12px",
+              boxShadow: "0 6px 20px rgba(0,0,0,0.08)",
+            }}
+            aria-label="Send us a message"
+          >
+            <h2 style={{ color: "#2E7D32", marginBottom: "20px" }}>📩 Send us a Message</h2>
 
-            <TextField fullWidth margin="normal" label="Name" name="name" value={formData.name} onChange={handleChange} placeholder="Your full name" required />
-            <TextField fullWidth margin="normal" label="Email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="your@email.com" required />
-            <TextField fullWidth margin="normal" label="Contact" name="contact" value={formData.contact} onChange={handleChange} placeholder="Your contact number" required />
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Message"
-              name="message"
-              value={formData.message}
+            <FormField
+              label="Name"
+              type="text"
+              name="name"
+              value={formData.name}
               onChange={handleChange}
-              placeholder="Type your message here..."
+              placeholder="Your full name"
               required
-              multiline
-              rows={4}
             />
-
-            <Button type="submit" fullWidth variant="contained" disabled={loading} sx={{ mt: 3, py: 1.75, bgcolor: loading ? "#95a5a6" : "#27ae60", fontWeight: 700, "&:hover": { bgcolor: loading ? "#95a5a6" : "#1e8449" } }}>
+            <FormField
+              label="Email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="your@email.com"
+              required
+            />
+            <FormField
+              label="contact"
+              type="text"
+              name="contact"
+              value={formData.contact}
+              onChange={handleChange}
+              placeholder="Your contact number"
+              required
+            />
+            <div style={{ marginBottom: "20px" }}>
+              <label style={labelStyle}>Message</label>
+              <textarea
+                name="message"
+                required
+                value={formData.message}
+                onChange={handleChange}
+                style={{ ...inputStyle, height: "120px", resize: "vertical" }}
+                placeholder="Type your message here..."
+                aria-label="Message"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                width: "100%",
+                backgroundColor: loading ? "#95a5a6" : "#27ae60",
+                color: "#fff",
+                padding: "14px",
+                border: "none",
+                borderRadius: "8px",
+                fontSize: "16px",
+                fontWeight: "bold",
+                cursor: loading ? "not-allowed" : "pointer",
+                transition: "0.3s",
+              }}
+              aria-live="polite"
+              onMouseOver={(e) => !loading && (e.target.style.backgroundColor = "#1e8449")}
+              onMouseOut={(e) => !loading && (e.target.style.backgroundColor = "#27ae60")}
+            >
               {loading ? "Sending..." : "Send Message"}
-            </Button>
-          </Paper>
+            </button>
+          </form>
 
-          <Stack spacing={3} sx={{ flex: "1 1 300px" }}>
-            <ContactCard icon={<MdPhone size={28} color="#27ae60" />} title="Phone">
-              <a href="tel:+919876543210" style={{ color: "#636e72", textDecoration: "none" }}>
-                +91 98765 43210
-              </a>
-            </ContactCard>
-            <ContactCard icon={<MdEmail size={28} color="#2980b9" />} title="Email">
-              <a href="mailto:support@quickmart.com" style={{ color: "#636e72", textDecoration: "none" }}>
-                support@quickmart.com
-              </a>
-            </ContactCard>
-            <ContactCard icon={<MdLocationOn size={28} color="#e67e22" />} title="Address">
-              <span>123 QuickMart Street, Mumbai, India</span>
-            </ContactCard>
-          </Stack>
-        </Stack>
-      </Box>
-    </Box>
+          {/* Contact Info */}
+          <div style={{ flex: "1 1 300px", display: "flex", flexDirection: "column", gap: "25px" }}>
+            <ContactCard
+              icon={<FaPhoneAlt size={22} color="#27ae60" />}
+              title="Phone"
+              value={<a href="tel:+919876543210" style={{ color: "#636e72", textDecoration: "none" }}>+91 98765 43210</a>}
+            />
+            <ContactCard
+              icon={<FaEnvelope size={22} color="#2980b9" />}
+              title="Email"
+              value={<a href="mailto:support@quickmart.com" style={{ color: "#636e72", textDecoration: "none" }}>support@quickmart.com</a>}
+            />
+            <ContactCard
+              icon={<FaMapMarkerAlt size={22} color="#e67e22" />}
+              title="Address"
+              value={<span style={{ color: "#636e72" }}>123 QuickMart Street, Mumbai, India</span>}
+            />
+          </div>
+        </div>
+      </section>
+    </main>
   );
 };
+
+const FormField = ({ label, type, name, value, onChange, placeholder, required }) => (
+  <div style={{ marginBottom: "20px" }}>
+    <label style={labelStyle}>{label}</label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder={placeholder}
+      required={required}
+      style={inputStyle}
+    />
+  </div>
+);
+
+const labelStyle = { display: "block", marginBottom: "6px", fontWeight: "600", color: "#2c3e50" };
+
+const inputStyle = {
+  width: "100%",
+  padding: "12px",
+  border: "1px solid #ccc",
+  borderRadius: "8px",
+  fontSize: "1rem",
+  transition: "0.3s",
+};
+
+const ContactCard = ({ icon, title, value }) => (
+  <div
+    style={{
+      background: "#fff",
+      padding: "20px",
+      borderRadius: "10px",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+      display: "flex",
+      alignItems: "center",
+      gap: "15px",
+      transition: "transform 0.3s, box-shadow 0.3s",
+    }}
+    onMouseOver={(e) => {
+      e.currentTarget.style.transform = "translateY(-6px)";
+      e.currentTarget.style.boxShadow = "0 6px 18px rgba(0,0,0,0.15)";
+    }}
+    onMouseOut={(e) => {
+      e.currentTarget.style.transform = "translateY(0)";
+      e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+    }}
+  >
+    {icon}
+    <div>
+      <strong style={{ display: "block", color: "#2c3e50", fontSize: "1.1rem" }}>{title}</strong>
+      <span style={{ color: "#636e72" }}>{value}</span>
+    </div>
+  </div>
+);
 
 export default ContactUs;

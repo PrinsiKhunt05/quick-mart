@@ -3,37 +3,8 @@ import Product from '../models/product.js';
 
 export const addProduct = async (req, res) => {
   try {
-    const rawProductData = req.body.productData || req.body.productdata || null;
-    let productData = null;
-
-    if (rawProductData) {
-      if (typeof rawProductData === "string") {
-        productData = JSON.parse(rawProductData);
-      } else if (typeof rawProductData === "object") {
-        productData = rawProductData;
-      } else {
-        throw new Error("Invalid productData format");
-      }
-    } else {
-      productData = {
-        name: req.body.name,
-        description: req.body.description,
-        category: req.body.category,
-        price: req.body.price,
-        offerPrice: req.body.offerPrice || req.body.offerprice,
-        inStock: req.body.inStock,
-      };
-    }
-
-    if (!productData || !productData.name || !productData.description || !productData.category || !productData.price || productData.offerPrice === undefined) {
-      return res.status(400).json({
-        success: false,
-        message: "productData is required and must include name, description, category, price and offerPrice",
-        receivedBody: req.body,
-      });
-    }
-
-    const images = req.files || [];
+    const productData = JSON.parse(req.body.productData);
+    const images = req.files;
     
     if (!images || images.length === 0) {
       return res.status(400).json({ success: false, message: "No images uploaded" });
@@ -47,17 +18,8 @@ export const addProduct = async (req, res) => {
       })
     );
 
-    // Normalize data types
-    productData.price = Number(productData.price);
-    productData.offerprice = Number(productData.offerPrice ?? productData.offerprice);
-    productData.inStock = productData.inStock !== undefined
-      ? productData.inStock === true || productData.inStock === 'true' || productData.inStock === '1'
-      : true;
-
-    if (typeof productData.description === 'string') {
-      productData.description = [productData.description];
-    }
-
+    // Handle offerPrice to offerprice conversion
+    productData.offerprice = productData.offerPrice;
     delete productData.offerPrice;
 
     // Create product in database

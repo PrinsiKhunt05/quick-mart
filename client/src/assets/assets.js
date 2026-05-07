@@ -759,9 +759,9 @@ export const dummyProducts = [
     offerPrice: 45,
     image: [yippee_image],
     description: [
-        "Non-fried noodles for healthier choice",
-        "Tasty and filling",
-        "Convenient for busy schedules",
+      "Non-fried noodles for healthier choice",
+      "Tasty and filling",
+      "Convenient for busy schedules",
     ],
     createdAt: "2025-03-25T07:17:46.018Z",
     updatedAt: "2025-03-25T07:18:13.103Z",

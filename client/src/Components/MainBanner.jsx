@@ -1,145 +1,117 @@
 import React from "react";
-import { Link as RouterLink } from "react-router-dom";
-import { Box, Typography, Button, Stack } from "@mui/material";
-import { MdArrowForward, MdChevronRight } from "react-icons/md";
+import { Link } from "react-router-dom";
 
 const MainBanner = () => {
-  const trust = [
-    { label: "Quality Guaranteed", icon: "M10 18a8 8 0 100-16 8 8 0 000 16z" },
-    { label: "Fast Delivery", icon: "M3 3h14l-1 9H4L3 3zm5 12a2 2 0 104 0H8z" },
-    { label: "Best Prices", icon: "M5 6h10v2H5V6zm0 4h10v2H5v-2zm0 4h6v2H5v-2z" },
-  ];
-
   return (
-    <Box
-      component="section"
-      className="gradient-bg"
-      sx={{
-        position: "relative",
-        borderRadius: 4,
-        overflow: "hidden",
-        mt: 3,
-        boxShadow: 6,
-      }}
+    <section
+      className="relative rounded-3xl overflow-hidden shadow-2xl mt-6"
       aria-label="Main promotional banner"
     >
-      <Box
-        sx={{
-          position: "relative",
-          height: { xs: 500, md: 600 },
-        }}
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            inset: 0,
-            background: "linear-gradient(to bottom right, rgba(30,58,138,0.35), rgba(88,28,135,0.45), rgba(67,56,202,0.35))",
-          }}
-        />
-        <Box sx={{ position: "absolute", top: 48, left: 48, width: 96, height: 96, bgcolor: "rgba(255,255,255,0.1)", borderRadius: "50%", filter: "blur(40px)" }} />
-        <Box sx={{ position: "absolute", bottom: 64, right: 64, width: 128, height: 128, bgcolor: "rgba(255,255,255,0.1)", borderRadius: "50%", filter: "blur(48px)" }} />
-      </Box>
+      {/* Background with gradient overlay */}
+      <div className="relative h-[500px] md:h-[600px] gradient-bg">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-purple-900/40 to-indigo-900/30"></div>
 
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          px: { xs: 3, md: 6, lg: 10 },
-          textAlign: "center",
-        }}
-      >
-        <Box sx={{ maxWidth: "56rem", mx: "auto" }}>
-          <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ display: "inline-flex", px: 2.5, py: 1, bgcolor: "rgba(255,255,255,0.2)", backdropFilter: "blur(12px)", borderRadius: 999, border: "1px solid rgba(255,255,255,0.35)", mb: 4, boxShadow: 3 }}>
-            <Box sx={{ width: 10, height: 10, bgcolor: "#4ade80", borderRadius: "50%", animation: "pulse 2s infinite", "@keyframes pulse": { "0%,100%": { opacity: 1 }, "50%": { opacity: 0.6 } } }} />
-            <Typography variant="body2" color="#fff" fontWeight={500}>
-              Fresh groceries delivered in 30 minutes
-            </Typography>
-          </Stack>
+        {/* Floating shapes */}
+        <div className="absolute top-12 left-12 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-16 right-16 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+        <div className="absolute top-1/2 left-1/3 w-20 h-20 bg-white/5 rounded-full blur-xl"></div>
+      </div>
 
-          <Typography variant="h2" component="h1" sx={{ color: "#fff", fontWeight: 800, mb: 3, lineHeight: 1.1, fontSize: { xs: "2.25rem", md: "3.75rem", lg: "4.5rem" } }}>
-            Freshness You
-            <Box
-              component="span"
-              display="block"
-              sx={{
-                background: "linear-gradient(90deg, #fcd34d, #fdba74)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
+      {/* Content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center px-6 md:px-12 lg:px-20 text-center">
+        <div className="max-w-4xl mx-auto">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 px-5 py-2 bg-white/20 backdrop-blur-md rounded-full text-white text-sm font-medium mb-8 border border-white/30 shadow-lg">
+            <span className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse"></span>
+            Fresh groceries delivered in 30 minutes
+          </div>
+
+          {/* Heading */}
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight tracking-tight">
+            <span className="block">Freshness You</span>
+            <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
               Can Trust
-            </Box>
-          </Typography>
+            </span>
+          </h1>
 
-          <Typography sx={{ fontSize: { xs: "1rem", md: "1.25rem" }, color: "rgba(255,255,255,0.92)", mb: 5, maxWidth: 640, mx: "auto", lineHeight: 1.7 }}>
-            Discover premium quality groceries at unbeatable prices. Fast delivery, fresh products, and exceptional service.
-          </Typography>
+          {/* Subtitle */}
+          <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Discover premium quality groceries at unbeatable prices. Fast
+            delivery, fresh products, and exceptional service.
+          </p>
 
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={2} justifyContent="center" alignItems="center">
-            <Button component={RouterLink} to="/products" variant="contained" color="inherit" size="large" endIcon={<MdArrowForward />} aria-label="Shop now" sx={{ px: 4, py: 2, borderRadius: 2, fontWeight: 700, fontSize: "1.125rem", minWidth: 200, bgcolor: "#fff", color: "#111827", "&:hover": { bgcolor: "#f3f4f6", transform: "translateY(-4px)" }, transition: "all 0.3s", boxShadow: 4 }}>
-              Shop Now
-            </Button>
-            <Button
-              component={RouterLink}
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+            <Link
               to="/products"
-              variant="outlined"
-              size="large"
-              endIcon={<MdChevronRight />}
-              aria-label="Explore deals"
-              sx={{
-                px: 4,
-                py: 2,
-                borderRadius: 2,
-                fontWeight: 700,
-                fontSize: "1.125rem",
-                minWidth: 200,
-                color: "#fff",
-                borderColor: "rgba(255,255,255,0.45)",
-                bgcolor: "rgba(255,255,255,0.08)",
-                backdropFilter: "blur(12px)",
-                "&:hover": { borderColor: "rgba(255,255,255,0.7)", bgcolor: "rgba(255,255,255,0.15)", transform: "translateY(-4px)" },
-                transition: "all 0.3s",
-              }}
+              className="group flex items-center gap-3 px-8 py-4 bg-white hover:bg-gray-100 transition-all duration-300 rounded-xl text-gray-900 font-semibold shadow-lg hover:shadow-xl text-lg min-w-[200px] justify-center transform hover:-translate-y-1"
+              aria-label="Shop now"
             >
-              Explore Deals
-            </Button>
-          </Stack>
-
-          <Stack direction={{ xs: "column", sm: "row" }} spacing={3} sx={{ mt: 7, maxWidth: 720, mx: "auto" }}>
-            {trust.map((item, idx) => (
-              <Box
-                key={idx}
-                sx={{
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  bgcolor: "rgba(255,255,255,0.12)",
-                  backdropFilter: "blur(16px)",
-                  borderRadius: 2,
-                  p: 2,
-                  border: "1px solid rgba(255,255,255,0.25)",
-                  transition: "box-shadow 0.2s",
-                  "&:hover": { boxShadow: 4 },
-                }}
+              <span>Shop Now</span>
+              <svg
+                className="w-5 h-5 transition-transform group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
               >
-                <Box component="svg" viewBox="0 0 20 20" fill="currentColor" sx={{ width: 32, height: 32, mb: 1, color: "#fcd34d" }}>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
+            </Link>
+
+            <Link
+              to="/products"
+              className="group flex items-center gap-3 px-8 py-4 bg-transparent hover:bg-white/10 transition-all duration-300 rounded-xl text-white font-semibold border-2 border-white/30 hover:border-white/50 text-lg min-w-[200px] justify-center backdrop-blur-md transform hover:-translate-y-1"
+              aria-label="Explore deals"
+            >
+              <span>Explore Deals</span>
+              <svg
+                className="w-5 h-5 transition-transform group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </Link>
+          </div>
+
+          {/* Trust indicators */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-14 max-w-3xl mx-auto">
+            {[
+              { label: "Quality Guaranteed", icon: "M10 18a8 8 0 100-16 8 8 0 000 16z" },
+              { label: "Fast Delivery", icon: "M3 3h14l-1 9H4L3 3zm5 12a2 2 0 104 0H8z" },
+              { label: "Best Prices", icon: "M5 6h10v2H5V6zm0 4h10v2H5v-2zm0 4h6v2H5v-2z" },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="flex flex-col items-center bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/20 shadow-md hover:shadow-lg transition"
+              >
+                <svg
+                  className="w-8 h-8 mb-2 text-yellow-300"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path d={item.icon} />
-                </Box>
-                <Typography variant="body2" fontWeight={500} color="rgba(255,255,255,0.95)">
+                </svg>
+                <span className="text-sm font-medium text-white/90">
                   {item.label}
-                </Typography>
-              </Box>
+                </span>
+              </div>
             ))}
-          </Stack>
-        </Box>
-      </Box>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 };
 

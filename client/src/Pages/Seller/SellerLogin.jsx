@@ -1,27 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { Box, Paper, Typography, TextField, Button, Stack } from "@mui/material";
+import React, { useEffect, useState } from 'react';
 import { useAppContext } from "../../Context/AppContext";
-import toast from "react-hot-toast";
+import toast from 'react-hot-toast';
 
 const SellerLogin = () => {
-  const { isSeller, setIsSeller, setSellerProfile, navigate, axios } = useAppContext();
+  const { isSeller, setIsSeller, sellerProfile, setSellerProfile, navigate, axios } = useAppContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      const { data } = await axios.post("/api/seller/login", { email, password });
+      const { data } = await axios.post('/api/seller/login', { email, password });
+      console.log('Login response:', data); // Debug log
       if (data.success) {
         setIsSeller(true);
+        // Store the profile data returned from backend
         if (data.profile) {
+          console.log('Setting profile:', data.profile); // Debug log
           setSellerProfile(data.profile);
         }
-        navigate("/seller");
+        navigate('/seller');
       } else {
         toast.error(data.message);
       }
     } catch (error) {
+      console.error('Login error:', error); // Debug log
       toast.error(error?.response?.data?.message || error.message);
     }
   };
@@ -30,26 +33,44 @@ const SellerLogin = () => {
     if (isSeller) {
       navigate("/seller/dashboard");
     }
-  }, [isSeller, navigate]);
+  }, [isSeller]);
 
   return (
-    <Box component="form" onSubmit={onSubmitHandler} sx={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", typography: "body2", color: "text.secondary", p: 2 }}>
-      <Paper elevation={8} sx={{ p: 4, py: 6, minWidth: { xs: "100%", sm: 352 }, maxWidth: 400, border: 1, borderColor: "grey.200" }}>
-        <Stack spacing={2.5}>
-          <Typography variant="h5" textAlign="center" fontWeight={500}>
-            <Typography component="span" color="primary">
-              Seller
-            </Typography>{" "}
-            Login
-          </Typography>
-          <TextField label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="enter your email" required fullWidth size="small" />
-          <TextField label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="enter your password" required fullWidth size="small" />
-          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ py: 1.25, textTransform: "none" }}>
-            Login
-          </Button>
-        </Stack>
-      </Paper>
-    </Box>
+    <form
+      onSubmit={onSubmitHandler}
+      className="min-h-screen flex items-center text-sm text-gray-600"
+    >
+      <div className="flex flex-col gap-5 m-auto items-start p-8 py-12 min-w-80 sm:min-w-88 rounded-lg shadow-xl border border-gray-200">
+        <p className="text-2xl font-medium m-auto">
+          <span className="text-primary">Seller</span> Login
+        </p>
+        <div className="w-full">
+          <p>Email</p>
+          <input
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+            type="email"
+            placeholder="enter your email"
+            className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+            required
+          />
+        </div>
+        <div className="w-full">
+          <p>Password</p>
+          <input
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            type="password"
+            placeholder="enter your password"
+            className="border border-gray-200 rounded w-full p-2 mt-1 outline-primary"
+            required
+          />
+        </div>
+        <button className="bg-primary text-white w-full py-2 rounded-md cursor-pointer">
+          Login
+        </button>
+      </div>
+    </form>
   );
 };
 

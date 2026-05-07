@@ -29,7 +29,7 @@ productRoute.get('/', (req, res) => {
 });
 
 // Product routes
-productRoute.post('/add', authSeller, upload.any(), addProduct);
+productRoute.post('/add', upload.array(["images"]), authSeller, addProduct);
 productRoute.get('/list', ProductList);
 productRoute.get('/:id', ProductById); // Changed from '/id' to '/:id'
 productRoute.post('/stock', authSeller, changeStock);

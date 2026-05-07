@@ -45,7 +45,7 @@ export const placeOrderCOD = async (req, res) => {
 export const placeOrderStripe = async (req, res) => {
   try {
     const { userId, items, address } = req.body;
-    const origin = req.headers.origin || process.env.FRONTEND_URL || "http://localhost:5173";
+    const { origin } = req.headers;
 
     if (!address || items.length === 0) {
       return res.json({ success: false, message: "Invalid data" });

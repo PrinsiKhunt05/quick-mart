@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Box, Typography, TextField, Button, Stack, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 import { assets, categories } from "../../assets/assets";
 import { useAppContext } from "../../Context/AppContext";
 import toast from "react-hot-toast";
@@ -26,12 +25,21 @@ const AddProduct = () => {
         offerPrice,
       };
 
+      // const formData = new FormData();
+      // formData.append("productData", JSON.stringify(productData));
+      // for (let i = 0; i < files.length; i++) {
+      //   formData.append("images", files[i]);
+      // }
+
+      // const {data} = axios.post("/api/product/add", formData);
+
+
       const formData = new FormData();
-      formData.append("productData", JSON.stringify(productData));
-      for (let i = 0; i < files.length; i++) {
-        formData.append("images", files[i]);
-      }
-      const { data } = await axios.post("/api/product/add", formData);
+formData.append("productData", JSON.stringify(productData));
+for (let i = 0; i < files.length; i++) {
+  formData.append("images", files[i]);
+}
+const { data } = await axios.post("/api/product/add", formData);
 
       if (data.success) {
         toast.success(data.message);
@@ -50,57 +58,128 @@ const AddProduct = () => {
   };
 
   return (
-    <Box className="no-scrollbar" sx={{ flex: 1, height: "95vh", overflowY: "auto", display: "flex", flexDirection: "column" }}>
-      <Box component="form" onSubmit={onSubmitHandler} sx={{ p: { xs: 2, md: 5 }, maxWidth: 520 }}>
-        <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-          Product Image
-        </Typography>
-        <Stack direction="row" flexWrap="wrap" gap={2} sx={{ mt: 1 }}>
-          {Array(4)
-            .fill("")
-            .map((_, index) => (
-              <label key={index} htmlFor={`image${index}`}>
-                <input
-                  onChange={(e) => {
-                    const updateFiles = [...files];
-                    updateFiles[index] = e.target.files[0];
-                    setFiles(updateFiles);
-                  }}
-                  type="file"
-                  id={`image${index}`}
-                  hidden
-                />
-                <Box component="img" src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area} alt="upload" sx={{ maxWidth: 100, cursor: "pointer" }} />
-              </label>
-            ))}
-        </Stack>
+    <div className="no-scrollbar flex-1 h-[95vh] overflow-y-scroll flex flex-col justify-between ">
+      <form
+        onSubmit={onSubmitHandler}
+        className="md:p-10 p-4 space-y-5 max-w-lg"
+      >
+        <div>
+          <p className="text-base font-medium">Product Image</p>
+          <div className="flex flex-wrap items-center gap-3 mt-2">
+            {Array(4)
+              .fill("")
+              .map((_, index) => (
+                <label key={index} htmlFor={`image${index}`}>
+                  <input
+                    onChange={(e) => {
+                      const updateFiles = [...files];
+                      updateFiles[index] = e.target.files[0];
+                      setFiles(updateFiles);
+                    }}
+                    type="file"
+                    id={`image${index}`}
+                    hidden
+                  />
 
-        <TextField label="Product Name" value={name} onChange={(e) => setName(e.target.value)} id="product-name" fullWidth margin="normal" placeholder="Type here" required />
-        <TextField label="Product Description" value={description} onChange={(e) => setDescription(e.target.value)} id="product-description" fullWidth margin="normal" multiline rows={4} placeholder="Type here" />
-        <FormControl fullWidth margin="normal">
-          <InputLabel id="category-label">Category</InputLabel>
-          <Select labelId="category-label" label="Category" value={category} onChange={(e) => setCategory(e.target.value)} id="category" required displayEmpty>
-            <MenuItem value="">
-              <em>Select Category</em>
-            </MenuItem>
+                  <img
+                    className="max-w-24 cursor-pointer"
+                    src={
+                      files[index]
+                        ? URL.createObjectURL(files[index])
+                        : assets.upload_area
+                    }
+                    alt="uploadArea"
+                    width={100}
+                    height={100}
+                  />
+                </label>
+              ))}
+          </div>
+        </div>
+        <div className="flex flex-col gap-1 max-w-md">
+          <label className="text-base font-medium" htmlFor="product-name">
+            Product Name
+          </label>
+          <input
+            onChange={(e) => setName(e.target.value)}
+            value={name}
+            id="product-name"
+            type="text"
+            placeholder="Type here"
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            required
+          />
+        </div>
+        <div className="flex flex-col gap-1 max-w-md">
+          <label
+            className="text-base font-medium"
+            htmlFor="product-description"
+          >
+            Product Description
+          </label>
+          <textarea
+            onChange={(e) => setDescription(e.target.value)}
+            value={description}
+            id="product-description"
+            rows={4}
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
+            placeholder="Type here"
+          ></textarea>
+        </div>
+        <div className="w-full flex flex-col gap-1">
+          <label className="text-base font-medium" htmlFor="category">
+            Category
+          </label>
+          <select
+            onChange={(e) => setCategory(e.target.value)}
+            value={category}
+            id="category"
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            menuplacement="top"
+          >
+            <option value="">Select Category</option>
             {categories.map((item, index) => (
-              <MenuItem key={index} value={item.path}>
+              <option key={index} value={item.path}>
                 {item.path}
-              </MenuItem>
+              </option>
             ))}
-          </Select>
-        </FormControl>
-
-        <Stack direction="row" spacing={3} sx={{ mt: 2 }}>
-          <TextField label="Product Price" value={price} onChange={(e) => setPrice(e.target.value)} id="product-price" type="number" placeholder="0" required fullWidth />
-          <TextField label="Offer Price" value={offerPrice} onChange={(e) => setOfferPrice(e.target.value)} id="offer-price" type="number" placeholder="0" required fullWidth />
-        </Stack>
-
-        <Button type="submit" variant="contained" color="primary" sx={{ mt: 3, px: 4, py: 1.25, textTransform: "none", fontWeight: 600 }}>
+          </select>
+        </div>
+        <div className="flex items-center gap-5 flex-wrap">
+          <div className="flex-1 flex flex-col gap-1 w-32">
+            <label className="text-base font-medium" htmlFor="product-price">
+              Product Price
+            </label>
+            <input
+              onChange={(e) => setPrice(e.target.value)}
+              value={price}
+              id="product-price"
+              type="number"
+              placeholder="0"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              required
+            />
+          </div>
+          <div className="flex-1 flex flex-col gap-1 w-32">
+            <label className="text-base font-medium" htmlFor="offer-price">
+              Offer Price
+            </label>
+            <input
+              onChange={(e) => setOfferPrice(e.target.value)}
+              value={offerPrice}
+              id="offer-price"
+              type="number"
+              placeholder="0"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              required
+            />
+          </div>
+        </div>
+        <button className="px-8 py-2.5 bg-primary text-white font-medium rounded cursor-pointer">
           ADD
-        </Button>
-      </Box>
-    </Box>
+        </button>
+      </form>
+    </div>
   );
 };
 

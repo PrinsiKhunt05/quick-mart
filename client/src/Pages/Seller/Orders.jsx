@@ -1,107 +1,102 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography, Paper, Stack, Button } from "@mui/material";
-import { useAppContext } from "../../Context/AppContext";
-import { assets } from "../../assets/assets";
-import toast from "react-hot-toast";
+import React ,{ useEffect,useState } from 'react'
+import { useAppContext } from '../../Context/AppContext';
+import { assets } from '../../assets/assets';
+import toast from 'react-hot-toast';
 
 const Orders = () => {
-  const { currency, axios } = useAppContext();
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(false);
+   const {currency ,axios} = useAppContext()
+   const [orders,setOrders] = useState([])
+   const [loading, setLoading] = useState(false)
 
-  const fetchOrders = async () => {
-    setLoading(true);
+   const fetchOrders = async () =>{
+    setLoading(true)
     try {
-      const { data } = await axios.get("/api/order/seller");
-      if (data.success) {
-        setOrders(data.orders || []);
-      } else {
-        toast.error(data.message);
-      }
+        const {data} = await axios.get('/api/order/seller')
+        if(data.success){
+            setOrders(data.orders || [])
+            console.log('Orders fetched:', data.orders); // Log for debugging
+        }else{
+            toast.error(data.message)
+        }
     } catch (error) {
-      toast.error(error.message);
+        toast.error(error.message)
+        console.error('Error fetching orders:', error);
     } finally {
-      setLoading(false);
+        setLoading(false)
     }
-  };
-
-  useEffect(() => {
+   };
+useEffect(() =>{
     fetchOrders();
+    // Auto-refresh orders every 5 seconds to catch payment updates from webhook
     const interval = setInterval(fetchOrders, 5000);
     return () => clearInterval(interval);
-  }, []);
+},[])
 
-  return (
-    <Box className="no-scrollbar" sx={{ flex: 1, height: "95vh", overflowY: "auto", p: { xs: 2, md: 4 } }}>
-      <Stack direction={{ xs: "column", md: "row" }} justifyContent="space-between" alignItems={{ md: "center" }} spacing={2} sx={{ mb: 2 }}>
-        <Typography variant="h6" fontWeight={500}>
-          Orders List
-        </Typography>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <Typography variant="body2" color="text.secondary" fontWeight={600}>
-            Total Orders: {orders.length}
-          </Typography>
-          <Button variant="contained" size="small" disabled={loading} onClick={fetchOrders} sx={{ textTransform: "none" }}>
-            <Box component="img" src={assets.refresh_icon} alt="" sx={{ width: 16, height: 16, mr: 1, animation: loading ? "spin 1s linear infinite" : "none", "@keyframes spin": { from: { transform: "rotate(0deg)" }, to: { transform: "rotate(360deg)" } } }} />
-            {loading ? "Loading..." : "Refresh"}
-          </Button>
-        </Stack>
-      </Stack>
 
-      {!orders || orders.length === 0 ? (
-        <Typography align="center" color="text.secondary" sx={{ py: 4 }}>
-          No orders found
-        </Typography>
-      ) : (
-        <Stack spacing={2}>
-          {orders.map((order, index) =>
-            order ? (
-              <Paper key={index} variant="outlined" sx={{ p: 3, maxWidth: "56rem" }}>
-                <Stack direction={{ xs: "column", md: "row" }} spacing={3} justifyContent="space-between" alignItems={{ md: "center" }}>
-                  <Stack direction="row" spacing={2} sx={{ maxWidth: 320 }}>
-                    <Box component="img" src={assets.box_icon} alt="" sx={{ width: 48, height: 48, objectFit: "contain" }} />
-                    <Stack>
-                      {order.items?.map((item, i) => (
-                        <Typography key={i} variant="body2" fontWeight={600}>
-                          {item.product?.name || "Product Name Not Available"}{" "}
-                          <Typography component="span" color="primary.main">
-                            x {item.quantity || 0}
-                          </Typography>
-                        </Typography>
-                      ))}
-                    </Stack>
-                  </Stack>
+   return (
+    <div className='no-scrollbar flex-1 h-[95vh] overflow-y-scroll'>
+        <div className="md:p-10 p-4 space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <h2 className="text-lg font-medium">Orders List</h2>
+                <div className="flex items-center gap-4">
+                    <span className="text-gray-600 text-sm font-medium">Total Orders: {orders.length}</span>
+                    <button 
+                        onClick={fetchOrders}
+                        disabled={loading}
+                        className="flex items-center gap-2 px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        <img src={assets.refresh_icon} alt="refresh" className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                        {loading ? 'Loading...' : 'Refresh'}
+                    </button>
+                </div>
+            </div>
+            {!orders || orders.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                    <p>No orders found</p>
+                </div>
+            ) : (
+            orders.map((order, index) => (
+                order && (
+                <div key={index} className="flex flex-col  md:items-center  md:flex-row
+                gap-5 justify-between  p-5 max-w-4xl rounded-md border border-gray-300">
 
-                  <Typography variant="body2" sx={{ opacity: 0.75 }}>
-                    {order.address?.street || "N/A"}, {order.address?.city || "N/A"}
-                    <br />
-                    {order.address?.state || "N/A"}, {order.address?.zipcode || "N/A"}
-                    <br />
-                    {order.address?.phone || "N/A"}
-                  </Typography>
+                    <div className="flex gap-5 max-w-80">
+                        <img className="w-12 h-12 object-cover " src={assets.box_icon} alt="boxIcon" />
+                        <div>
+                            {order.items && order.items.map((item, index) => (
+                                <div key={index} className="flex flex-col">
+                                    <p className="font-medium">
+                                        {item.product?.name || 'Product Name Not Available'}{" "}
+                                        <span className="text-primary">x {item.quantity || 0}</span>
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
-                  <Typography variant="subtitle1" fontWeight={700}>
-                    {currency}
-                    {order.amount}
-                  </Typography>
+                    <div className="text-sm md:text-base text-black/60">
+                       
+                        <p>{order.address?.street || 'N/A'}, {order.address?.city || 'N/A'}</p>
+                        <p> {order.address?.state || 'N/A'},{order.address?.zipcode || 'N/A'}</p>
+                        <p>{order.address?.phone || 'N/A'}</p>
+                    </div>
 
-                  <Stack sx={{ typography: "body2", opacity: 0.85 }}>
-                    <Typography variant="caption">
-                      Method:{" "}
-                      <Box component="span" sx={{ fontWeight: 700, color: order.paymentType === "Online" ? "primary.main" : "secondary.main" }}>
-                        {order.paymentType === "Online" ? " Online" : " COD"}
-                      </Box>
-                    </Typography>
-                    <Typography variant="caption">{new Date(order.createdAt).toLocaleDateString()}</Typography>
-                  </Stack>
-                </Stack>
-              </Paper>
-            ) : null,
-          )}
-        </Stack>
-      )}
-    </Box>
-  );
-};
+                    <p className="font-medium text-base my-auto ">{currency}{order.amount}</p>
 
-export default Orders;
+                    <div className="flex flex-col text-sm md:text-base text-black/60">
+                        <p>Method: <span className={`font-medium ${order.paymentType === 'Online' ? 'text-blue-600' : 'text-purple-600'}`}>{order.paymentType === 'Online' ? ' Online' : ' COD'}</span></p>
+                        <p>Date: {new Date(order.createdAt).toLocaleDateString()}</p>
+                        {/* <p className={`font-medium text-base ${order.isPaid ? 'text-green-600' : 'text-orange-600'}`}>
+                            {order.isPaid ? "✅ Paid" : "⏳ Pending"}
+                        </p> */}
+                    </div>
+                </div>
+                )
+            ))
+            )}
+        </div>
+    </div>
+    );
+}
+
+export default Orders

@@ -1,22 +1,23 @@
 import React from "react";
-import { Box, Typography, Button, Stack } from "@mui/material";
-import { Link, Outlet, NavLink } from "react-router-dom";
 import { useAppContext } from "../../Context/AppContext";
 import { assets } from "../../assets/assets";
+import { Link, Outlet } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const SellerLayout = () => {
   const { axios, navigate, setIsSeller, sellerProfile, setSellerProfile } = useAppContext();
 
-  const sidebarLinks = [
-    { name: "Admin Profile ", path: "/seller/dashboard", icon: assets.profile_icon },
+    const sidebarLinks = [
+    { name: "Admin Profile ", path: "/seller/dashboard", icon: assets.profile_icon},
     { name: "Add product", path: "/seller/dashboard/add-product", icon: assets.add_icon },
-    {
+    {      
       name: "Product List",
       path: "/seller/dashboard/product-list",
       icon: assets.product_list_icon,
     },
     { name: "Orders", path: "/seller/dashboard/orders", icon: assets.order_icon },
+    { name: "User-list", path: "/seller/dashboard/user-list", icon: assets.product_list_icon },
   ];
 
   const logout = async () => {
@@ -37,69 +38,43 @@ const SellerLayout = () => {
 
   return (
     <>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ px: { xs: 2, md: 4 }, py: 2, borderBottom: 1, borderColor: "grey.300", bgcolor: "background.paper" }}>
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 800,
-              background: "linear-gradient(90deg, #2563eb 0%, #7c3aed 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            Quickmart
-          </Typography>
+      <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-300 py-3 bg-white ">
+        <Link to={"/"}>
+         <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Quickmart
+            </span>
         </Link>
-        <Stack direction="row" alignItems="center" spacing={3} sx={{ color: "text.secondary" }}>
-          <Typography variant="body2">Hi! {sellerProfile?.name || "Admin"}</Typography>
-          <Button variant="outlined" size="small" onClick={logout} sx={{ borderRadius: 999, textTransform: "none" }}>
+        <div className="flex items-center gap-5 text-gray-500">
+          <p>Hi! {sellerProfile?.name || 'Admin'}</p>
+          <button
+            onClick={logout}
+            className="border rounded-full text-sm px-4 py-1"
+          >
             Logout
-          </Button>
-        </Stack>
-      </Stack>
-
-      <Stack direction="row" sx={{ minHeight: "calc(100vh - 57px)" }}>
-        <Box
-          sx={{
-            width: { xs: 64, md: 256 },
-            borderRight: 1,
-            borderColor: "grey.300",
-            pt: 2,
-            flexShrink: 0,
-          }}
-        >
+          </button>
+        </div>
+      </div>
+      <div className="flex">
+        <div className="md:w-64 w-16 border-r h-[95vh] text-base border-gray-300 pt-4 flex flex-col ">
           {sidebarLinks.map((item) => (
-            <NavLink key={item.name} to={item.path} end={item.path === "/seller/dashboard"} style={{ textDecoration: "none" }}>
-              {({ isActive }) => (
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  spacing={2}
-                  sx={{
-                    py: 1.5,
-                    px: 2,
-                    borderRight: { md: isActive ? "6px solid" : "6px solid transparent" },
-                    borderColor: { md: isActive ? "primary.main" : "transparent" },
-                    bgcolor: isActive ? "rgba(37,99,235,0.08)" : "transparent",
-                    color: isActive ? "primary.main" : "text.primary",
-                    "&:hover": { bgcolor: "rgba(0,0,0,0.04)" },
-                  }}
-                >
-                  <Box component="img" src={item.icon} alt="" sx={{ width: 28, height: 28 }} />
-                  <Typography sx={{ display: { xs: "none", md: "block" } }} variant="body2">
-                    {item.name}
-                  </Typography>
-                </Stack>
-              )}
+            <NavLink
+              to={item.path}
+              key={item.name}
+              end={item.path === "/seller/dashboard"}
+              className={({ isActive }) => `flex items-center py-3 px-4 gap-3 
+                            ${
+                              isActive
+                                ? "border-r-4 md:border-r-[6px] bg-primary/10 border-primary text-primary"
+                                : "hover:bg-gray-100/90 border-white text-gray-700"
+                            }`}
+            >
+              <img src={item.icon} alt="" className="w-7 h-7" />
+              <p className="md:block hidden text-center">{item.name}</p>
             </NavLink>
           ))}
-        </Box>
-        <Box sx={{ flex: 1, overflow: "auto" }}>
-          <Outlet />
-        </Box>
-      </Stack>
+        </div>
+        <Outlet />
+      </div>
     </>
   );
 };

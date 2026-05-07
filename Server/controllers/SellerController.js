@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-// Single seller/admin — configure SELLER_EMAIL, SELLER_PASSWORD, optional SELLER_NAME in .env
+//  login seller (supports up to 3 admins via env vars)
 
 export const sellerLogin = async (req, res) => {
   try {
@@ -8,28 +8,32 @@ export const sellerLogin = async (req, res) => {
     const inputEmail = String(email || '').trim().toLowerCase();
     const inputPassword = String(password || '').trim();
 
-    const sellerEmail = process.env.SELLER_EMAIL ? String(process.env.SELLER_EMAIL).trim().toLowerCase() : '';
-    const sellerPassword = process.env.SELLER_PASSWORD ? String(process.env.SELLER_PASSWORD).trim() : '';
-    const sellerName = process.env.SELLER_NAME ? String(process.env.SELLER_NAME).trim() : 'Admin';
-
-    if (!sellerEmail || !sellerPassword) {
-      return res.json({ success: false, message: 'Seller login is not configured.' });
+    // Build allowed admins list from env (backward-compatible with single SELLER_EMAIL/PASSWORD)
+    const admins = [];
+    if (process.env.SELLER_EMAIL && process.env.SELLER_PASSWORD) {
+      admins.push({ key: 'default', email: String(process.env.SELLER_EMAIL).trim().toLowerCase(), password: String(process.env.SELLER_PASSWORD).trim(), name: process.env.SELLER_NAME || 'Admin' });
+    }
+    for (let i = 1; i <= 3; i++) {
+      const e = process.env[`SELLER_${i}_EMAIL`];
+      const p = process.env[`SELLER_${i}_PASSWORD`];
+      const n = process.env[`SELLER_${i}_NAME`];
+      if (e && p) admins.push({ key: String(i), email: String(e).trim().toLowerCase(), password: String(p).trim(), name: n || `Admin ${i}` });
     }
 
-    const matched =
-      inputEmail === sellerEmail && inputPassword === sellerPassword
-        ? { email: sellerEmail, name: sellerName || 'Admin' }
-        : null;
-
+    // Debug: log which admin emails were loaded and the email attempting to login
     try {
+      const loadedEmails = admins.map(a => a.email);
+      console.log('[sellerLogin] loaded admin emails:', loadedEmails);
       console.log('[sellerLogin] incoming email:', inputEmail);
     } catch {}
+
+    const matched = admins.find((a) => a.email === inputEmail && a.password === inputPassword);
 
     if (!matched) {
       return res.json({ success: false, message: 'invalid Credintials' });
     }
 
-    const profile = { role: 'admin', email: matched.email, name: matched.name };
+    const profile = { role: 'admin', email: matched.email, name: matched.name, key: matched.key };
     const token = jwt.sign(profile, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     res.cookie('sellerToken', token, {

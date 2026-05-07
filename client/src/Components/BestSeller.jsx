@@ -1,37 +1,29 @@
 import React from "react";
-import { Box, Typography, Link } from "@mui/material";
 import ProductCard from "./ProductCard";
 import { useAppContext } from "../Context/AppContext";
 
 const BestSeller = () => {
   const { products } = useAppContext();
-
+  
+  console.log("🛍️ BestSeller - Products received:", products);
+  console.log("🛍️ BestSeller - In-stock products:", products?.filter(p => p.inStock));
+  
   return (
-    <Box sx={{ mt: 8 }}>
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Typography variant="h5" sx={{ fontWeight: 500, fontSize: { xs: "1.5rem", md: "1.875rem" } }}>
-          Best Sellers
-        </Typography>
-        <Link href="#" underline="hover" color="primary" sx={{ fontSize: "0.875rem", display: { xs: "none", md: "inline" } }}>
-          View all
-        </Link>
-      </Box>
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
-          gap: 2,
-          mt: 3,
-        }}
-      >
+    <div className="mt-16">
+      <div className="flex items-center justify-between">
+        <p className="text-2xl md:text-3xl font-medium">Best Sellers</p>
+        <a href="#" className="text-sm text-primary hover:underline hidden md:inline">View all</a>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 lg:grid-cols-4 mt-6">
         {products
           .filter((product) => product.inStock)
           .slice(0, 5)
-          .map((product, index) => (
-            <ProductCard key={index} product={product} />
-          ))}
-      </Box>
-    </Box>
+          .map((product, index) => {
+            console.log("🛍️ Rendering product:", product.name);
+            return <ProductCard key={index} product={product} />;
+          })}
+      </div>
+    </div>
   );
 };
 

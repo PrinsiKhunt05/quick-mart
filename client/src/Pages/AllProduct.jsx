@@ -1,45 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
-import { useAppContext } from "../Context/AppContext";
-import ProductCard from "../Components/ProductCard";
+import React, { useEffect, useState } from 'react'
+import { useAppContext } from '../Context/AppContext'
+import ProductCard from '../Components/ProductCard'
 
 const AllProduct = () => {
-  const { products, searchQuery } = useAppContext();
-  const [filteredProducts, setFilteredProducts] = useState([]);
+    const {products,searchQuery} = useAppContext()
+    const [filteredProducts , setFilteredProducts] =  useState([])
 
-  useEffect(() => {
-    if (searchQuery.length > 0) {
-      setFilteredProducts(products.filter((product) => product.name.toLowerCase().includes(searchQuery.toLowerCase())));
-    } else {
-      setFilteredProducts(products);
-    }
-  }, [products, searchQuery]);
+    useEffect(() =>{
+      if(searchQuery.length > 0){
+        setFilteredProducts(products.filter(
+          product => product.name.toLowerCase().includes(searchQuery.toLowerCase())
+        ))}else{
+          setFilteredProducts(products)
+        }
+    },[products,searchQuery])
 
   return (
-    <Box sx={{ mt: 8 }}>
-      <Box sx={{ display: "inline-flex", flexDirection: "column", alignItems: "flex-end" }}>
-        <Typography variant="h5" fontWeight={500} sx={{ textTransform: "uppercase" }}>
-          All Products
-        </Typography>
-        <Box sx={{ width: 64, height: 3, bgcolor: "primary.main", borderRadius: 999, mt: 0.5 }} />
-      </Box>
+    <div className='mt-16 flex flex-col'>
+        <div className='flex flex-col items-end w-max'>
+            <p className='text-2xl font-medium uppercase'>All Products</p>
+            <div className='w-16 h-0.5 bg-primary rounded-full'></div>
+        </div>
 
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)", md: "repeat(3, 1fr)", lg: "repeat(4, 1fr)" },
-          gap: 1.5,
-          mt: 3,
-        }}
-      >
-        {filteredProducts
-          .filter((product) => product.inStock)
-          .map((product, index) => (
-            <ProductCard key={index} product={product} />
-          ))}
-      </Box>
-    </Box>
-  );
-};
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 lg:grid-cols-4 mt-6">
+  {filteredProducts.filter((product)=> product.inStock).map((product,index) =>(
+       <ProductCard key={index} product={product}/>     
+  ))}
+        </div>
+    </div>
+  )
+}
 
-export default AllProduct;
+export default AllProduct

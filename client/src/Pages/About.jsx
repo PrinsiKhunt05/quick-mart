@@ -1,114 +1,140 @@
 import React from "react";
-import { Box, Typography, Button, Container, Grid, Card, CardContent, Link } from "@mui/material";
 
 const About = () => {
-  const cards = [
-    { title: "Fresh & Organic", desc: "Handpicked fruits and vegetables directly from farms." },
-    { title: "Wide Variety", desc: "From groceries to household essentials, all in one place." },
-    { title: "Affordable Prices", desc: "Best deals and discounts for your daily needs." },
-    { title: "Fast Delivery", desc: "Get your groceries delivered to your doorstep quickly." },
-  ];
-
   return (
-    <Box sx={{ color: "text.primary" }}>
-      <Box
-        sx={{
-          backgroundImage:
-            "url('https://img.freepik.com/free-photo/healthy-food-background-studio-photo-different-fruits-vegetables-black-table_155003-32946.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+    <div style={{ fontFamily: "Arial, sans-serif", color: "#333" }}>
+      
+      {/* Hero Section */}
+      <section
+        style={{
+          background: "url('https://img.freepik.com/free-photo/healthy-food-background-studio-photo-different-fruits-vegetables-black-table_155003-32946.jpg') center/cover no-repeat",
           color: "#fff",
-          py: { xs: 8, md: 12 },
-          px: 2,
+          padding: "100px 20px",
           textAlign: "center",
         }}
       >
-        <Typography variant="h3" sx={{ fontWeight: 800, mb: 2, fontSize: { xs: "2rem", md: "3rem" } }}>
+        <h1 style={{ fontSize: "50px", fontWeight: "bold", marginBottom: "15px" }}>
           Welcome to QuickMart 🛒
-        </Typography>
-        <Typography variant="h6" sx={{ maxWidth: 700, mx: "auto", opacity: 0.95 }}>
+        </h1>
+        <p style={{ fontSize: "20px", maxWidth: "700px", margin: "0 auto" }}>
           Your trusted online grocery store – delivering freshness, quality, and convenience at your doorstep.
-        </Typography>
-      </Box>
+        </p>
+      </section>
 
-      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 8 }, px: 2 }}>
-        <Grid container spacing={5} alignItems="center">
-          <Grid item xs={12} md={6}>
-            <Typography variant="h4" sx={{ color: "success.dark", mb: 2, fontWeight: 700 }}>
-              🌱 Our Mission
-            </Typography>
-            <Typography sx={{ fontSize: "1.125rem", lineHeight: 1.7 }}>
-              At <strong>QuickMart</strong>, we aim to simplify grocery shopping by offering a wide range of fresh, affordable, and high-quality products. We
-              partner with local farmers and trusted suppliers to bring you only the best.
-            </Typography>
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Box component="img" src="https://img.freepik.com/free-photo/basket-full-vegetables_1112-316.jpg" alt="Mission" sx={{ width: "100%", borderRadius: 2, boxShadow: 4 }} />
-          </Grid>
-        </Grid>
-      </Container>
+      {/* Our Mission Section */}
+      <section style={{ maxWidth: "1200px", margin: "60px auto", padding: "0 20px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px", alignItems: "center" }}>
+          
+          {/* Text */}
+          <div>
+            <h2 style={{ fontSize: "32px", color: "#2E7D32", marginBottom: "15px" }}>🌱 Our Mission</h2>
+            <p style={{ fontSize: "18px", lineHeight: "1.7" }}>
+              At <strong>QuickMart</strong>, we aim to simplify grocery shopping by offering a wide
+              range of fresh, affordable, and high-quality products. We partner with local farmers
+              and trusted suppliers to bring you only the best.
+            </p>
+          </div>
 
-      <Box sx={{ bgcolor: "grey.100", py: { xs: 6, md: 8 }, px: 2 }}>
-        <Typography variant="h4" align="center" sx={{ color: "success.dark", mb: 5, fontWeight: 700 }}>
+          {/* Image */}
+          <div>
+            <img
+              src="https://img.freepik.com/free-photo/basket-full-vegetables_1112-316.jpg"
+              alt="Mission QuickMart"
+              style={{ width: "100%", borderRadius: "12px", boxShadow: "0 6px 20px rgba(0,0,0,0.15)" }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us - Cards */}
+      <section style={{ background: "#f5f5f5", padding: "60px 20px" }}>
+        <h2 style={{ textAlign: "center", fontSize: "32px", color: "#388E3C", marginBottom: "40px" }}>
           🚀 Why Choose QuickMart?
-        </Typography>
-        <Grid container spacing={3} sx={{ maxWidth: 1100, mx: "auto" }}>
-          {cards.map((card, i) => (
-            <Grid item xs={12} sm={6} md={3} key={i}>
-              <Card
-                elevation={3}
-                sx={{
-                  height: "100%",
-                  textAlign: "center",
-                  borderRadius: 2,
-                  transition: "transform 0.25s, box-shadow 0.25s",
-                  "&:hover": { transform: "translateY(-8px)", boxShadow: 8 },
-                }}
-              >
-                <CardContent sx={{ py: 3 }}>
-                  <Typography variant="h6" sx={{ color: "success.dark", mb: 1, fontWeight: 700 }}>
-                    {card.title}
-                  </Typography>
-                  <Typography sx={{ fontSize: "1rem", color: "text.secondary" }}>{card.desc}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
+        </h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "25px", maxWidth: "1100px", margin: "0 auto" }}>
+          {[
+            { title: "Fresh & Organic", desc: "Handpicked fruits and vegetables directly from farms." },
+            { title: "Wide Variety", desc: "From groceries to household essentials, all in one place." },
+            { title: "Affordable Prices", desc: "Best deals and discounts for your daily needs." },
+            { title: "Fast Delivery", desc: "Get your groceries delivered to your doorstep quickly." },
+          ].map((card, i) => (
+            <div
+              key={i}
+              style={{
+                background: "#fff",
+                padding: "25px",
+                borderRadius: "12px",
+                textAlign: "center",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                transition: "transform 0.3s, box-shadow 0.3s",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = "translateY(-8px)";
+                e.currentTarget.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.1)";
+              }}
+            >
+              <h3 style={{ color: "#2E7D32", marginBottom: "10px" }}>{card.title}</h3>
+              <p style={{ fontSize: "16px", color: "#555" }}>{card.desc}</p>
+            </div>
           ))}
-        </Grid>
-      </Box>
+        </div>
+      </section>
 
-      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 8 }, px: 2 }}>
-        <Grid container spacing={5} alignItems="center">
-          <Grid item xs={12} md={6}>
-            <Box
-              component="img"
+      {/* Our Story Section */}
+      <section style={{ maxWidth: "1200px", margin: "60px auto", padding: "0 20px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px", alignItems: "center" }}>
+          
+          {/* Image */}
+          <div>
+            <img
               src="https://img.freepik.com/free-photo/grocery-shopping-basket-cart-filled-with-fresh-vegetables-isolated-white-background-generative-ai_1258-150754.jpg"
               alt="Our Story"
-              sx={{ width: "100%", borderRadius: 2, boxShadow: 4 }}
+              style={{ width: "100%", borderRadius: "12px", boxShadow: "0 6px 20px rgba(0,0,0,0.15)" }}
             />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Typography variant="h4" sx={{ color: "success.dark", mb: 2, fontWeight: 700 }}>
-              📍 Our Story
-            </Typography>
-            <Typography sx={{ fontSize: "1.125rem", lineHeight: 1.7 }}>
-              QuickMart started as a small neighborhood shop with a big dream – to make grocery shopping simple and enjoyable. Today, we proudly serve
-              thousands of happy families, delivering not just groceries, but trust, convenience, and care.
-            </Typography>
-          </Grid>
-        </Grid>
-      </Container>
+          </div>
 
-      <Box sx={{ bgcolor: "success.dark", color: "#fff", textAlign: "center", py: { xs: 6, md: 8 }, px: 2 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 700 }}>
-          Ready to Shop with QuickMart?
-        </Typography>
-        <Typography sx={{ fontSize: "1.125rem", mb: 4, opacity: 0.95 }}>Get your groceries delivered fast, fresh, and affordably.</Typography>
-        <Button component={Link} href="/products" variant="contained" color="inherit" sx={{ bgcolor: "#fff", color: "success.dark", fontWeight: 700, px: 4, "&:hover": { bgcolor: "#f1f5f9" } }}>
+          {/* Text */}
+          <div>
+            <h2 style={{ fontSize: "32px", color: "#2E7D32", marginBottom: "15px" }}>📍 Our Story</h2>
+            <p style={{ fontSize: "18px", lineHeight: "1.7" }}>
+              QuickMart started as a small neighborhood shop with a big dream – 
+              to make grocery shopping simple and enjoyable. Today, we proudly 
+              serve thousands of happy families, delivering not just groceries, 
+              but trust, convenience, and care.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section style={{ background: "#2E7D32", color: "#fff", textAlign: "center", padding: "60px 20px" }}>
+        <h2 style={{ fontSize: "32px", marginBottom: "20px" }}>Ready to Shop with QuickMart?</h2>
+        <p style={{ fontSize: "18px", marginBottom: "30px" }}>
+          Get your groceries delivered fast, fresh, and affordably.
+        </p>
+        <a
+          href="/products"
+          style={{
+            background: "#fff",
+            color: "#2E7D32",
+            padding: "14px 30px",
+            borderRadius: "8px",
+            fontSize: "18px",
+            fontWeight: "bold",
+            textDecoration: "none",
+            transition: "0.3s",
+          }}
+          onMouseOver={(e) => (e.target.style.background = "#f1f1f1")}
+          onMouseOut={(e) => (e.target.style.background = "#fff")}
+        >
           🛍️ Start Shopping
-        </Button>
-      </Box>
-    </Box>
+        </a>
+      </section>
+    </div>
   );
 };
 

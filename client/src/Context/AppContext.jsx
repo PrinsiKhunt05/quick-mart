@@ -8,9 +8,8 @@ import axios from "axios";
 // ======================
 const getBackendUrl = () => {
   // Check for environment variable first
-  const envBackendUrl = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL;
-  if (envBackendUrl) {
-    return envBackendUrl;
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
   }
   
   // For production, use the same origin as frontend
@@ -35,23 +34,22 @@ const axiosInstance = axios.create({
   timeout: 30000, // Increased to 30 seconds for Render cold starts
 });
 
-// Add request interceptor for debugging
-axiosInstance.interceptors.request.use(
-  (config) => {
-    console.log("API Request:", config.method?.toUpperCase(), config.url);
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
-
-// Add response interceptor for debugging
+// Add retry interceptor
 axiosInstance.interceptors.response.use(
-  (response) => {
-    console.log("API Response:", response.status, response.config.url);
-    return response;
-  },
-  (error) => {
-    console.error("API Error:", error.response?.status, error.response?.data || error.message);
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    
+    // Retry on timeout or network error
+    if ((error.code === 'ECONNABORTED' || error.message.includes('Network Error')) && !originalRequest._retry) {
+      originalRequest._retry = true;
+      console.log("Retrying request due to timeout...");
+      
+      // Wait 2 seconds and retry
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return axiosInstance(originalRequest);
+    }
+    
     return Promise.reject(error);
   }
 );
@@ -73,7 +71,7 @@ export const AppContextProvider = ({ children }) => {
   const [products, SetProducts] = useState([]);
   const [cartItems, SetCartItems] = useState({});
   const [pendingAdd, setPendingAdd] = useState(null);
-  const [searchQuery, SetSearchQuery] = useState("");
+  const [searchQuery, SetSearchQuery] = useState({});
 
   // Fetch seller status
   const fetchSeller = async () => {
@@ -155,7 +153,7 @@ export const AppContextProvider = ({ children }) => {
       setPendingAdd(null);
       let cartData = { ...cartItems };
       cartData[itemId] = (cartData[itemId] || 0) + 1;
-      SetCartItems(cartData);
+      SetCartItems(cartItems);
       toast.success("Added To Cart.");
     }
   }, [user]);
@@ -163,11 +161,7 @@ export const AppContextProvider = ({ children }) => {
   // Update cart item quantity
   const updateCartItem = (itemId, quantity) => {
     let cartData = { ...cartItems };
-    if (quantity > 0) {
-      cartData[itemId] = quantity;
-    } else {
-      delete cartData[itemId];
-    }
+    cartData[itemId] = quantity;
     SetCartItems(cartData);
     toast.success("Cart updated");
   };
@@ -181,7 +175,10 @@ export const AppContextProvider = ({ children }) => {
     
     let cartData = { ...cartItems };
     if (cartData[itemId]) {
-      delete cartData[itemId];
+      cartData[itemId] -= 1;
+      if (cartData[itemId] === 0) {
+        delete cartData[itemId];
+      }
     }
     toast.success("Removed from Cart.");
     SetCartItems(cartData);
@@ -225,7 +222,7 @@ export const AppContextProvider = ({ children }) => {
       }
     };
     
-    if (user) {
+    if (user && Object.keys(cartItems).length > 0) {
       updateCart();
     }
   }, [cartItems, user]);

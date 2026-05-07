@@ -1,27 +1,30 @@
-import React, { useEffect } from "react";
-import { Box, CircularProgress } from "@mui/material";
-import { useAppContext } from "../Context/AppContext";
-import { useLocation } from "react-router-dom";
+import React from 'react'
+import { useAppContext } from '../Context/AppContext'
+import { useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 
 const Loading = () => {
-  const { navigate } = useAppContext();
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const nextUrl = query.get("next");
 
-  useEffect(() => {
-    if (nextUrl) {
-      setTimeout(() => {
-        navigate(`${nextUrl}`);
-      }, 5000);
-    }
-  }, [nextUrl, navigate]);
+
+const  { navigate } = useAppContext()
+let {search}  = useLocation()
+const query = new URLSearchParams(search)
+const nextUrl = query.get('next');
+
+  useEffect(() =>{
+         if(nextUrl){
+            setTimeout(() =>{
+                navigate(`${nextUrl}`)
+            },5000)
+         }
+  },[nextUrl])
+
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh" }}>
-      <CircularProgress size={96} thickness={4} color="primary" />
-    </Box>
-  );
-};
+    <div className='flex justify-center items-center h-screen'>
+        <div className='animate-spin rounded-full h-24 w-24 border-4 border-gray-300 border-t-primary'></div>
+    </div>
+  )
+}
 
-export default Loading;
+export default Loading

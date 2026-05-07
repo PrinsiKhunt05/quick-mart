@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, Paper, Stack } from "@mui/material";
 import { useAppContext } from "../Context/AppContext";
 
 const MyOrder = () => {
@@ -24,77 +23,73 @@ const MyOrder = () => {
   }, [user]);
 
   return (
-    <Box sx={{ my: 8, pb: 8 }}>
-      <Box sx={{ display: "inline-flex", flexDirection: "column", alignItems: "flex-end", mb: 4 }}>
-        <Typography variant="h5" fontWeight={500} sx={{ textTransform: "uppercase" }}>
-          My Orders
-        </Typography>
-        <Box sx={{ width: 64, height: 3, bgcolor: "primary.main", borderRadius: 999, mt: 0.5 }} />
-      </Box>
+    <div className="my-16 pb-16">
+      <div className="flex flex-col items-end w-max mb-8">
+        <p className="text-2xl font-medium uppercase">My Orders</p>
+        <div className="w-16 h-0.5 bg-primary rounded-full"></div>
+      </div>
 
       {myOrders.map((order, index) => (
-        <Paper key={index} variant="outlined" sx={{ mb: 5, p: 2, py: 3, maxWidth: "56rem" }}>
-          <Stack direction={{ xs: "column", md: "row" }} flexWrap="wrap" spacing={1} sx={{ color: "text.secondary", fontWeight: 500, typography: "body2", mb: 2 }}>
-            <Typography variant="caption">Order ID: {order._id}</Typography>
-            <Typography variant="caption">Payment: {order.paymentType}</Typography>
-            <Typography variant="caption">
+        <div
+          key={index}
+          className="border border-gray-300 rounded-lg mb-10 p-4 py-5 max-w-4xl"
+        >
+          <p className="flex justify-between md:items-center text-gray-400 md:font-medium flex-wrap gap-2">
+            <span>Order ID: {order._id}</span>
+            <span>Payment: {order.paymentType}</span>
+            <span>
               Total Amount: {currency} {order.amount}
-            </Typography>
-            <Typography variant="caption">
-              Date: {new Date(order.createdAt).toLocaleDateString()} {new Date(order.createdAt).toLocaleTimeString()}
-            </Typography>
-          </Stack>
+            </span>
+            <span>
+              Date:{" "}
+              {new Date(order.createdAt).toLocaleDateString()}{" "}
+              {new Date(order.createdAt).toLocaleTimeString()}
+            </span>
+          </p>
 
           {order.items.map((item, idx) => (
-            <Stack
+            <div
               key={idx}
-              direction={{ xs: "column", md: "row" }}
-              alignItems={{ md: "center" }}
-              justifyContent="space-between"
-              sx={{
-                position: "relative",
-                bgcolor: "background.paper",
-                py: 2,
-                px: 2,
-                borderTop: 1,
-                borderColor: "grey.300",
-                gap: 2,
-              }}
+              className={`relative bg-white text-gray-500/70 ${
+                order.items.length !== idx + 1 && "border-b"
+              } border-gray-300 flex flex-col md:flex-row md:items-center justify-between p-4 py-5 md:gap-16 w-full max-w-4xl`}
             >
-              <Stack direction="row" alignItems="center">
-                <Box sx={{ bgcolor: "rgba(37,99,235,0.1)", p: 2, borderRadius: 2 }}>
-                  <Box component="img" src={item.product?.image?.[0]} alt={item.product?.name || "Product"} sx={{ width: 64, height: 64, objectFit: "cover" }} />
-                </Box>
-                <Box sx={{ ml: 2 }}>
-                  <Typography variant="h6" fontWeight={500}>
+              <div className="flex items-center mb-4 md:mb-0">
+                <div className="bg-primary/10 p-4 rounded-lg">
+                  <img
+                    src={item.product?.image?.[0]}
+                    alt={item.product?.name || "Product"}
+                    className="w-16 h-16 object-cover"
+                  />
+                </div>
+                <div className="ml-4">
+                  <h2 className="text-xl font-medium text-gray-800">
                     {item.product?.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Category: {item.product?.category}
-                  </Typography>
-                </Box>
-              </Stack>
+                  </h2>
+                  <p>Category: {item.product?.category}</p>
+                </div>
+              </div>
 
-              <Stack sx={{ minWidth: 120 }}>
-                <Typography variant="body2">Quantity: {item.quantity || 1}</Typography>
-                <Typography variant="body2">Status: {order.status || "Processing"}</Typography>
-              </Stack>
+              <div className="flex flex-col justify-center md:ml-8 mb-4 md:mb-0">
+                <p>Quantity: {item.quantity || 1}</p>
+                <p>Status: {order.status || "Processing"}</p>
+              </div>
 
-              <Typography color="primary" fontWeight={600} fontSize="1.125rem">
+              <p className="text-primary text-lg font-medium">
                 Amount: {currency}{" "}
-                {item.product?.offerprice ? item.product.offerprice * item.quantity : "N/A"}
-              </Typography>
-            </Stack>
+                {item.product?.offerprice
+                  ? item.product.offerprice * item.quantity
+                  : "N/A"}
+              </p>
+            </div>
           ))}
-        </Paper>
+        </div>
       ))}
 
       {myOrders.length === 0 && (
-        <Typography align="center" color="text.secondary" variant="h6">
-          No orders yet.
-        </Typography>
+        <p className="text-center text-gray-500 text-lg">No orders yet.</p>
       )}
-    </Box>
+    </div>
   );
 };
 

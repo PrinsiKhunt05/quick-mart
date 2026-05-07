@@ -1,38 +1,25 @@
-import React from "react";
-import { Box, Typography, TextField, Button, Stack } from "@mui/material";
+import React from 'react'
 
 const NewLetter = () => {
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", mt: 10, pb: 7 }}>
-      <Typography variant="h4" fontWeight={600} sx={{ fontSize: { xs: "1.5rem", md: "2.125rem" } }}>
-        Never Miss a Deal!
-      </Typography>
-      <Typography color="text.secondary" sx={{ mt: 1, mb: 4, fontSize: { xs: "1rem", md: "1.125rem" } }}>
-        Subscribe to get the latest offers, new arrivals, and exclusive discounts
-      </Typography>
-      <Stack
-        direction="row"
-        component="form"
-        sx={{ width: "100%", maxWidth: 640, height: { xs: 48, md: 52 }, border: 1, borderColor: "grey.400", borderRadius: 1, overflow: "hidden" }}
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <TextField
-          placeholder="Enter your email id"
-          required
-          fullWidth
-          variant="standard"
-          InputProps={{ disableUnderline: true }}
-          sx={{
-            "& .MuiInputBase-root": { px: 1.5, height: "100%", bgcolor: "background.paper" },
-            "& .MuiInputBase-input": { color: "text.secondary" },
-          }}
-        />
-        <Button type="submit" variant="contained" color="primary" sx={{ borderRadius: 0, px: { xs: 4, md: 6 }, minWidth: 120, textTransform: "none", fontWeight: 600 }}>
-          Subscribe
-        </Button>
-      </Stack>
-    </Box>
-  );
-};
+        <div className="flex flex-col items-center justify-center text-center space-y-2 mt-24 pb-14">
+            <h1 className="md:text-4xl text-2xl font-semibold">Never Miss a Deal!</h1>
+            <p className="md:text-lg text-gray-500/70 pb-8">
+                Subscribe to get the latest offers, new arrivals, and exclusive discounts
+            </p>
+            <form className="flex items-center justify-between max-w-2xl w-full md:h-13 h-12">
+                <input
+                    className="border border-gray-300 rounded-md h-full border-r-0 outline-none w-full rounded-r-none px-3 text-gray-500"
+                    type="text"
+                    placeholder="Enter your email id"
+                    required
+                />
+                <button type="submit" className="md:px-12 px-8 h-full text-white bg-primary hover:bg-primary-dull transition-all cursor-pointer rounded-md rounded-l-none">
+                    Subscribe
+                </button>
+            </form>
+        </div>
+    )
+}
 
-export default NewLetter;
+export default NewLetter
