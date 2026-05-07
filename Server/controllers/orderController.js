@@ -33,6 +33,7 @@ export const placeOrderCOD = async (req, res) => {
       isPaid: true, // COD is marked as paid (user will pay in person)
     });
 
+    await User.findByIdAndUpdate(userId, { cartItems: {} }); // clear cart after successful order
     await sendOrderEmail(userId, order);
 
     return res.json({ success: true, message: "Order placed successfully" });

@@ -222,7 +222,7 @@ export const AppContextProvider = ({ children }) => {
       }
     };
     
-    if (user && Object.keys(cartItems).length > 0) {
+    if (user) {
       updateCart();
     }
   }, [cartItems, user]);
